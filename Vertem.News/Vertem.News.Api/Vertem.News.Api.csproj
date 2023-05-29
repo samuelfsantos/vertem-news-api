@@ -27,6 +27,7 @@
     <ProjectReference Include="..\Vertem.News.Data\Vertem.News.Infra.Data.csproj" />
     <ProjectReference Include="..\Vertem.News.Domain\Vertem.News.Domain.csproj" />
     <ProjectReference Include="..\Vertem.News.Infra.IoC\Vertem.News.Infra.csproj" />
+    <ProjectReference Include="..\Vertem.News.Services\Vertem.News.Services.csproj" />
   </ItemGroup>
 
 </Project>

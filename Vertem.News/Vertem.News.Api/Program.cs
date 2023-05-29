@@ -8,6 +8,9 @@ using Vertem.News.Infra.Data.Contexts;
 using Vertem.News.Infra.Data.Repositories;
 using Vertem.News.Infra.PipelineBehavior;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration;
+using Vertem.News.Api.Configurations;
+using Vertem.News.Services.NewsApiOrg;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(x => x.UseSqlite(builder.Con
 
 builder.Services.AddScoped<INoticiaRepository, NoticiaRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<INewsApiOrgService, NewsApiOrgService>();
 
 builder.Services.AddMediatR(typeof(Vertem.News.Application.AssemblyReference).Assembly);
 builder.Services.AddMediatR(typeof(Vertem.News.Domain.AssemblyReference).Assembly);
@@ -55,6 +59,8 @@ builder.Services.AddSwaggerGen(c =>
     });
     c.UseInlineDefinitionsForEnums();
 });
+
+builder.Services.AddNewsApiOrgServiceConfiguration(builder.Configuration);
 
 //services cors
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>

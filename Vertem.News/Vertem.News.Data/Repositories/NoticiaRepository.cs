@@ -53,6 +53,24 @@ namespace Vertem.News.Infra.Data.Repositories
             return await noticias.ToListAsync();
         }
 
+        public async Task<IEnumerable<Noticia>> Select(string palavraChave)
+        {
+            palavraChave = palavraChave.ToUpper();
+
+            var noticias = _context.Noticias.Where(n =>
+                            n.Id.ToString().ToUpper().Contains(palavraChave) ||
+                            n.Titulo.ToUpper().Contains(palavraChave) ||
+                            n.Descricao.ToUpper().Contains(palavraChave) ||
+                            n.Conteudo.ToUpper().Contains(palavraChave) ||
+                            n.Categoria.ToUpper().Contains(palavraChave) ||
+                            n.Fonte.ToUpper().Contains(palavraChave) ||
+                            (!String.IsNullOrWhiteSpace(n.ImgUrl) && n.ImgUrl.ToUpper().Contains(palavraChave)) ||
+                            (!String.IsNullOrWhiteSpace(n.Autor) && n.Autor.ToUpper().Contains(palavraChave)))
+                .OrderByDescending(n => n.DataPublicacao);
+
+            return await noticias.ToListAsync();
+        }
+
         public Noticia Update(Noticia noticia)
         {
             var updateResult = _context.Noticias.Update(noticia);

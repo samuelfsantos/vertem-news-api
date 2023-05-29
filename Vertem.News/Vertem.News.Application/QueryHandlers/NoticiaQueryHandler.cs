@@ -7,7 +7,7 @@ using System.Net;
 
 namespace Vertem.News.Application.QueryHandlers
 {
-    public class NoticiaQueryHandler : IRequestHandler<GetNoticiaQuery, RequestResult<NoticiaOutput>>
+    public class NoticiaQueryHandler : IRequestHandler<GetNoticiaQuery, RequestResult<NoticiaOutput>>, IRequestHandler<GetNoticiaPalavraChaveQuery, RequestResult<NoticiaOutput>>
     {
         private readonly INoticiaRepository _repository;
 
@@ -39,6 +39,21 @@ namespace Vertem.News.Application.QueryHandlers
 
                     return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, NoticiaOutput.FromEntity(noticia), Enumerable.Empty<ErrorModel>());
                 }
+                var output = noticias.Select(p => NoticiaOutput.FromEntity(p));
+
+                return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
+            }
+            catch
+            {
+                return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
+            }
+        }
+
+        public async Task<RequestResult<NoticiaOutput>> Handle(GetNoticiaPalavraChaveQuery request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var noticias = await _repository.Select(request.PalavraChave);
                 var output = noticias.Select(p => NoticiaOutput.FromEntity(p));
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());

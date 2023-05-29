@@ -18,5 +18,6 @@ namespace Vertem.News.Domain.Interfaces
                     string? imgUrl = null,
                     string? autor = null,
                     bool includes = false);
+        Task<IEnumerable<Noticia>> Select(string palavraChave);
     }
 }

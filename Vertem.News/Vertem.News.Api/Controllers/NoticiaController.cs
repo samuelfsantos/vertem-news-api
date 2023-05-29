@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Vertem.News.Application.Queries;
 using Vertem.News.Application.ViewModels;
 using Vertem.News.Application.Commands;
+using Vertem.News.Domain.Enums;
 
 namespace Vertem.News.Api.Controllers
 {
-    [Route("api/v1/noticias")]
+    [Route("api/v1/news")]
     [ApiController]
     public class NoticiaController : BaseController
     {
@@ -15,22 +16,6 @@ namespace Vertem.News.Api.Controllers
         public NoticiaController(IMediator mediator)
         {
             _mediator = mediator;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var requestResult = await _mediator.Send(new GetNoticiaQuery());
-
-            return GetCustomResponseMultipleData(requestResult, failInstance: HttpContext.Request.Path.Value);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
-        {
-            var requestResult = await _mediator.Send(new GetNoticiaQuery(id: id, singleData: true));
-
-            return GetCustomResponseSingleData(requestResult, failInstance: HttpContext.Request.Path.Value);
         }
 
         [HttpPost]
@@ -72,6 +57,55 @@ namespace Vertem.News.Api.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var command = new DeleteNoticiaCommand(id);
+            var requestResult = await _mediator.Send(command);
+
+            return GetCustomResponseSingleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var requestResult = await _mediator.Send(new GetNoticiaQuery());
+
+            return GetCustomResponseMultipleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var requestResult = await _mediator.Send(new GetNoticiaQuery(id: id, singleData: true));
+
+            return GetCustomResponseSingleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+        }
+
+        [HttpGet("category/{category}")]
+        public async Task<IActionResult> GetByCategory(string category)
+        {
+            var requestResult = await _mediator.Send(new GetNoticiaQuery(categoria: category));
+
+            return GetCustomResponseMultipleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+        }
+
+        [HttpGet("source/{source}")]
+        public async Task<IActionResult> GetBySource(string source)
+        {
+            var requestResult = await _mediator.Send(new GetNoticiaQuery(fonte: source));
+
+            return GetCustomResponseMultipleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+        }
+
+        [HttpGet("search/{keyword}")]
+        public async Task<IActionResult> GetByKeyword(string keyword)
+        {
+            var requestResult = await _mediator.Send(new GetNoticiaPalavraChaveQuery(keyword));
+
+            return GetCustomResponseMultipleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+        }
+
+        [HttpPost("integracao-news-api-org")]
+        public async Task<IActionResult> InsertIntegracaoNewsApiOrg()
+        {
+            var command = new InsertNoticiaIntegracaoNewsApiOrgCommand();
             var requestResult = await _mediator.Send(command);
 
             return GetCustomResponseSingleData(requestResult, failInstance: HttpContext.Request.Path.Value);

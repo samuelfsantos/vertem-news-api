@@ -36,6 +36,5 @@ namespace Vertem.News.Application.Commands.Validators
                 .WithMessage("O autor deve ter no máximo 200 caractéres")
                 .WithErrorCode("InvalidAutor");
         }
-    }
-    }
+    }    
 }
