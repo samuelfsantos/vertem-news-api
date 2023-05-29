@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Uteis\NewFolder\**" />
+    <EmbeddedResource Remove="Uteis\NewFolder\**" />
+    <None Remove="Uteis\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vertem.News.Domain\Vertem.News.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
