@@ -11,7 +11,7 @@ using Vertem.News.Infra.Data.Contexts;
 namespace Vertem.News.Infra.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230527033303_Criacao_inicial_banco")]
+    [Migration("20230529214849_Criacao_inicial_banco")]
     partial class Criacao_inicial_banco
     {
         /// <inheritdoc />

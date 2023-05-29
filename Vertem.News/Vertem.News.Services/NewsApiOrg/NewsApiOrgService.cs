@@ -64,7 +64,7 @@ namespace Vertem.News.Services.NewsApiOrg
 
             var client = new RestClient
             {
-                BaseUrl = new Uri($"{_configuration.Url}/v2/top-headlinessss")
+                BaseUrl = new Uri($"{_configuration.Url}/v2/top-headlines")
             };
 
             resquest.AddQueryParameter("apiKey", _configuration.ChaveSistema);
