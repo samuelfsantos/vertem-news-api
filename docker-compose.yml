@@ -2,7 +2,7 @@ version: "3"
 
 services:
 
-    api-mercadinho:
+    api-vertem:
         image: registry.digitalocean.com/dcr-samuel/vertem-news-api:${TAG}
         container_name: vertem-news-api
         build: 
