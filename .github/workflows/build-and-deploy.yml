@@ -1,0 +1,88 @@
+name: CI_CD_PRD
+
+# 1
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events but only for the master branch
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image version'
+        required: true
+#2
+env:
+  REGISTRY: "registry.digitalocean.com/dcr-samuel"
+  IMAGE_NAME_PAGINA_TESTE: "pagina-teste"
+  IMAGE_NAME_API: "puc-mercadinho-api"
+
+#3
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    
+    steps:        
+      - name: Checkout the repo 
+        uses: actions/checkout@v2        
+        
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
+      
+      - name: Remove all old images from other repositories
+        run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME_PAGINA_TESTE)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME_PAGINA_TESTE) $(doctl registry repository list-tags $(echo $IMAGE_NAME_PAGINA_TESTE) | grep -o "sha.*") --force; else echo "No repository"; fi
+      
+      - name: Remove all old images from other repositories
+        run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME_API)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME_API) $(doctl registry repository list-tags $(echo $IMAGE_NAME_API) | grep -o "sha.*") --force; else echo "No repository"; fi
+
+      - name: Set TAG environment variable
+        run: echo TAG=$(echo $GITHUB_SHA | head -c7) >> $GITHUB_ENV
+
+      - name: Build Docker Image
+        env:
+          TAG: ${{ env.TAG }}
+        run: docker-compose -f docker-compose.yml build --no-cache --build-arg TAG=$TAG
+
+      - name: Push Docker Image
+        run: docker-compose -f docker-compose.yml push             
+
+       
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push
+    
+    steps:
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          envs: IMAGE_NAME_API,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
+          script: |
+            # Login to registry
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            # Stop running container
+            docker stop $(echo $IMAGE_NAME_API)
+            # Remove old container
+            docker rm $(echo $IMAGE_NAME_API)
+            # Run a new container from a new image
+            docker run -dt -p 5001:80 \
+            --restart always \
+            --name $(echo $IMAGE_NAME_API) \
+            $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)        
+            
+            
+            
+            
+           
+   
