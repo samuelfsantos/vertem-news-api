@@ -12,3 +12,17 @@ GET /news/search/{keyword}: Este endpoint deve retornar todas as notícias que c
 
 Link do pipeline: https://github.com/samuelfsantos/vertem-news-api/actions/runs/5115671438
 Link do projeto já com o deploy realizado na digital ocean: http://104.248.228.214:5008/swagger/index.html
+
+-> Estilos e Padrões de arquitetura utilizados
+* Domain-Driven Design (DDD)
+* SOLID
+* Repository Pattern
+* Unit Of Work Pattern
+
+-> Infra
+* Imagem docker (Net Core 7.0)
+* Docker Compose
+* Banco de dados SQLite
+  
+
+
