@@ -10,3 +10,5 @@ GET /news/category/{category}: Este endpoint deve retornar todas as notícias de
 GET /news/source/{source}: Este endpoint deve retornar todas as notícias de uma determinada fonte.
 GET /news/search/{keyword}: Este endpoint deve retornar todas as notícias que contêm a palavra-chave fornecida.
 
+Link do pipeline: https://github.com/samuelfsantos/vertem-news-api/actions/runs/5115671438
+Link do projeto já com o deploy realizado na digital ocean: http://104.248.228.214:5008/swagger/index.html
