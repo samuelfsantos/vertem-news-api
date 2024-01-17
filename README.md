@@ -9,3 +9,4 @@ GET /news/{id}: Este endpoint deve retornar uma única notícia baseada em seu I
 GET /news/category/{category}: Este endpoint deve retornar todas as notícias de uma determinada categoria.
 GET /news/source/{source}: Este endpoint deve retornar todas as notícias de uma determinada fonte.
 GET /news/search/{keyword}: Este endpoint deve retornar todas as notícias que contêm a palavra-chave fornecida.
+
