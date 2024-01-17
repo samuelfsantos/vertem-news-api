@@ -12,10 +12,12 @@ GET /news/search/{keyword}: Este endpoint deve retornar todas as notícias que c
 
 -> Estilos e Padrões de arquitetura utilizados
 * Domain-Driven Design (DDD)
+* Clean Architecture
 * SOLID
 * Repository Pattern
 * Unit Of Work Pattern
 * CQRS Pattern
+* Anti Corruption Layer Pattern (Services)
 
 -> Infra
 * CI/CD com GitHub Actions
@@ -25,7 +27,7 @@ GET /news/search/{keyword}: Este endpoint deve retornar todas as notícias que c
 * Hospedagem no Servidor Digital Ocean
 
 -> Links úteis
-* Pipeline GitHub Actions: https://github.com/samuelfsantos/vertem-news-api/actions/runs/5115671438
+* Pipeline GitHub Actions: https://github.com/samuelfsantos/vertem-news-api/actions
 * Link do projeto já com o deploy realizado na digital ocean: http://104.248.228.214:5008/swagger/index.html
   
 
