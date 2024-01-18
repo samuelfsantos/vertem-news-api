@@ -19,7 +19,7 @@ O candidato deve criar uma API RESTful que utiliza uma API pública de notícias
 * CQRS Pattern
 * Anti Corruption Layer Pattern (Services)
 
--> Infra
+-> DevOps
 * CI/CD com GitHub Actions
 * Imagem docker (Net Core 7.0)
 * Docker Compose
