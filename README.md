@@ -18,6 +18,7 @@ O candidato deve criar uma API RESTful que utiliza uma API pública de notícias
 * Unit Of Work Pattern
 * CQRS Pattern
 * Anti Corruption Layer Pattern (Services)
+* Documentação com Swagger
 
 -> DevOps
 * CI/CD com GitHub Actions
