@@ -9,6 +9,9 @@ O candidato deve criar uma API RESTful que utiliza uma API pública de notícias
 * GET /news/category/{category}: Este endpoint deve retornar todas as notícias de uma determinada categoria.
 * GET /news/source/{source}: Este endpoint deve retornar todas as notícias de uma determinada fonte.
 * GET /news/search/{keyword}: Este endpoint deve retornar todas as notícias que contêm a palavra-chave fornecida.
+* PUT /news/{id}: Este endpoint atualiza uma notícia baseada em seu ID.
+* DELETE /news/{id}: Este endpoint exclui uma notícia baseada em seu ID.
+* POST /news: Este endpoint inclui uma nova notícia.
 
 -> Estilos e Padrões de arquitetura utilizados
 * Domain-Driven Design (DDD)
