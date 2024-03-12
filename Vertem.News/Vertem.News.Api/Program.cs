@@ -47,9 +47,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "Vertem - Desafio técnico",
+        Title = "Vertem - Desafio tÃ©cnico",
         Version = "v1",
-        Description = "API REST notícias.",
+        Description = "API REST notÃ­cias.",
         Contact = new Microsoft.OpenApi.Models.OpenApiContact
         {
             Name = "Samuel Ferreira Santos",

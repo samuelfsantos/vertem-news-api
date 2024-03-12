@@ -2,16 +2,16 @@ version: "3"
 
 services:
 
-    api-vertem:
-        image: registry.digitalocean.com/dcr-samuel/vertem-news-api:${TAG}
-        container_name: vertem-news-api
-        build: 
-            context: Vertem.News
-            dockerfile: ./Vertem.News.Api/Dockerfile
-            args:
-                - TAG=${TAG}
-        ports:
-            - "5008:5008"
-        environment:
-            - ASPNETCORE_ENVIRONMENT=Production
-            - ASPNETCORE_URLS=http://*:5008
+  api-vertem:
+    image: registry.digitalocean.com/dcr-samuel/vertem-news-api:${TAG}
+    container_name: vertem-news-api
+    build: 
+      context: Vertem.News
+      dockerfile: ./Vertem.News.Api/Dockerfile
+      args:
+        - TAG=${TAG}
+    ports:
+      - "5008:5008"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5008
