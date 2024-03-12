@@ -80,7 +80,7 @@ jobs:
             # Login to registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
             # Run a new container from a new image
-            docker-compose up -d
+            docker-compose up -d -f docker-compose.yml
             
             
             
