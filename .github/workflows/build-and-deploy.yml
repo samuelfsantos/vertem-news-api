@@ -79,8 +79,21 @@ jobs:
             
             # Login to registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            # Stop running container
+            docker stop $(echo $IMAGE_NAME_API)
+            docker stop vertem-news-redis
+            # Remove old container
+            docker rm $(echo $IMAGE_NAME_API)
+            docker rm vertem-news-redis
             # Run a new container from a new image
-            docker-compose up -d -f docker-compose.yml
+            docker run -dt -p 5008:8080 \
+            --restart always \
+            --name $(echo $IMAGE_NAME_API) \
+            $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
+
+            docker run -dt -p 6379:6379 \
+            --restart always \
+            --name vertem-news-redis 
             
             
            
