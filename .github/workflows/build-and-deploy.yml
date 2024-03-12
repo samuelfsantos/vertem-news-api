@@ -72,7 +72,7 @@ jobs:
             # Remove old container
             docker rm $(echo $IMAGE_NAME_API)
             # Run a new container from a new image
-            docker run -dt -p 5008:80 \
+            docker run -dt -p 5008:8080 \
             --restart always \
             --name $(echo $IMAGE_NAME_API) \
             $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)        

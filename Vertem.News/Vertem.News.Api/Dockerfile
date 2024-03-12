@@ -1,9 +1,9 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.1 AS base
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0.101 AS build
 WORKDIR /src
 COPY ["./Vertem.News.Api/Vertem.News.Api.csproj", "Vertem.News.Api/"]
 RUN dotnet restore "Vertem.News.Api/Vertem.News.Api.csproj"
