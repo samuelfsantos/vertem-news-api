@@ -4,6 +4,8 @@ using Vertem.News.Application.Queries;
 using Vertem.News.Application.ViewModels;
 using Vertem.News.Application.Commands;
 using Vertem.News.Domain.Enums;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Vertem.News.Api.Controllers
 {
@@ -12,10 +14,12 @@ namespace Vertem.News.Api.Controllers
     public class NoticiaController : BaseController
     {
         private readonly IMediator _mediator;
+        private readonly IDistributedCache _cache;
 
-        public NoticiaController(IMediator mediator)
+        public NoticiaController(IMediator mediator, IDistributedCache cache)
         {
             _mediator = mediator;
+            _cache = cache;
         }
 
         [HttpPost]
@@ -110,5 +114,58 @@ namespace Vertem.News.Api.Controllers
 
             return GetCustomResponseSingleData(requestResult, failInstance: HttpContext.Request.Path.Value);
         }
+
+
+
+
+
+        [AllowAnonymous]
+        [HttpGet("redis")]
+        public IActionResult GetRedisCache(string key)
+        {
+            try
+            {
+                var cacheValue = _cache.GetString(key);
+
+                if (cacheValue == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(cacheValue);
+            }
+            catch (Exception ex)
+            {
+                var respostaErro = new { MensagemErro = ex.Message, Error = ex.ToString() };
+
+                return BadRequest(respostaErro);
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost("redis")]
+        public IActionResult SetRedisCache(string key, string value)
+        {
+            try
+            {
+                var cacheOptions = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10) // Expira em 10 segundos
+                };
+
+                _cache.SetString(key, value, cacheOptions);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                var respostaErro = new { MensagemErro = ex.Message, Error = ex.ToString() };
+
+                return BadRequest(respostaErro);
+            }
+        }
+
+
     }
 }
