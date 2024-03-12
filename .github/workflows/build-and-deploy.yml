@@ -25,6 +25,12 @@ jobs:
   build_and_push:
     runs-on: ubuntu-latest
     
+    services:
+      cache-vertem:
+        image: redis:latest
+        ports:
+          - '6379:6379'
+
     steps:        
       - name: Checkout the repo 
         uses: actions/checkout@v2        
