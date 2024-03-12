@@ -4,6 +4,7 @@ using Vertem.News.Api.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDatabaseConfig(builder.Configuration);
+builder.Services.AddCacheConfig(builder.Configuration, builder.Environment);
 builder.Services.AddDependencyInjectionConfig(builder.Configuration);
 builder.Services.AddMediatrConfig();
 builder.Services.AddValidatorsFromAssembly(typeof(Vertem.News.Domain.AssemblyReference).Assembly);
