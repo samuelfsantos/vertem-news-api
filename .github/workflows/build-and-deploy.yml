@@ -24,12 +24,6 @@ env:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
-    
-    services:
-      cache-vertem:
-        image: redis:latest
-        ports:
-          - '6379:6379'
 
     steps:        
       - name: Checkout the repo 
@@ -71,17 +65,22 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           envs: IMAGE_NAME_API,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
           script: |
+            ## Login to registry
+            #docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            ## Stop running container
+            #docker stop $(echo $IMAGE_NAME_API)
+            ## Remove old container
+            #docker rm $(echo $IMAGE_NAME_API)
+            ## Run a new container from a new image
+            #docker run -dt -p 5008:8080 \
+            #--restart always \
+            #--name $(echo $IMAGE_NAME_API) \
+            #$(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
+            
             # Login to registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-            # Stop running container
-            docker stop $(echo $IMAGE_NAME_API)
-            # Remove old container
-            docker rm $(echo $IMAGE_NAME_API)
             # Run a new container from a new image
-            docker run -dt -p 5008:8080 \
-            --restart always \
-            --name $(echo $IMAGE_NAME_API) \
-            $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)        
+            docker-compose up -d
             
             
             
