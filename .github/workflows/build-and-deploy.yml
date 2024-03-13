@@ -19,6 +19,7 @@ on:
 env:
   REGISTRY: "registry.digitalocean.com/dcr-samuel"
   IMAGE_NAME_API: "vertem-news-api"
+  CONTAINER_NAME_CACHE: "vertem-news-redis"
 
 #3
 jobs:
@@ -114,13 +115,9 @@ jobs:
           script: |
             # Login to registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-            # Stop running container
-            docker stop $(echo $IMAGE_NAME_API)
-            # Remove old container
-            docker rm $(echo $IMAGE_NAME_API)
-            # Run a new container from a new image
-            docker run -dt -p 5008:8080 \
-            --restart always \
-            --name $(echo $IMAGE_NAME_API) \
-            $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
-            docker-compose -f docker-compose.yml up -d cache-vertem
+            # Stop and remove old containers defined in docker-compose.yml
+            docker-compose -f /path/to/your/docker-compose.yml down
+            # Pull the latest images
+            docker-compose -f /path/to/your/docker-compose.yml pull
+            # Build and start containers defined in docker-compose.yml
+            docker-compose -f /path/to/your/docker-compose.yml up -d
