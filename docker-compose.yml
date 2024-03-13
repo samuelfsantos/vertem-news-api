@@ -19,8 +19,8 @@ services:
       - cache-vertem
       
   cache-vertem:
-    image: registry.digitalocean.com/dcr-samuel/redis:latest
-    #container_name: vertem-news-redis
+    image: mcr.microsoft.com/oss/bitnami/redis:latest
+    container_name: vertem-news-redis
     restart: always
     ports:
       - '6379:6379'
