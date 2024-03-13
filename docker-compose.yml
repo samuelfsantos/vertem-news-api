@@ -19,7 +19,7 @@ services:
       - cache-vertem
       
   cache-vertem:
-    image: redis:latest
+    image: rediss:latest
     container_name: vertem-news-redis
     restart: always
     ports:

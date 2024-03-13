@@ -47,7 +47,7 @@ jobs:
         env:
           TAG: ${{ env.TAG }}
         run: |
-          docker-compose -f docker-compose.yml up --no-cache --build-arg TAG=$TAG
+          docker-compose -f docker-compose.yml build --no-cache --build-arg TAG=$TAG
           docker image ls
 
       # - name: Build Docker Image
