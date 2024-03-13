@@ -19,7 +19,7 @@ services:
     #  - cache-vertem
       
   cache-vertem:
-    image: redis:6.2-alpine
+    image: redis:latest
     #container_name: vertem-news-redis
     restart: always
     ports:
