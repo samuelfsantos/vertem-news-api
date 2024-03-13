@@ -113,11 +113,11 @@ jobs:
             
             # Stop old containers
             docker stop $(echo $IMAGE_NAME_API)
-            docker stop $(echo $CONTAINER_NAME_CACHE)
+            #docker stop $(echo $CONTAINER_NAME_CACHE)
             
             # Remove old containers
             docker rm $(echo $IMAGE_NAME_API)
-            docker rm $(echo $CONTAINER_NAME_CACHE)
+            #docker rm $(echo $CONTAINER_NAME_CACHE)
             
             # Run new containers
             docker run -dt -p 5008:8080 \
