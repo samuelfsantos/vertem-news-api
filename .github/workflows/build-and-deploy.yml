@@ -55,8 +55,8 @@ jobs:
       - name: Tag and Push Redis Image
         run: |
           docker-compose -f docker-compose.yml build --no-cache
-          docker tag redis:6.2-alpine registry.digitalocean.com/dcr-samuel/redis:6.2-alpine
-          docker push registry.digitalocean.com/dcr-samuel/redis:6.2-alpine
+          docker tag redis:latest registry.digitalocean.com/dcr-samuel/redis:latest
+          docker push registry.digitalocean.com/dcr-samuel/redis:latest
 
 
 
