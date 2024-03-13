@@ -60,7 +60,7 @@ jobs:
       #   run: docker-compose -f docker-compose.yml push
       - name: Build and Push Docker Image
         run: |
-          docker-compose -f docker-compose.yml up --build --no-cache
+          docker-compose -f docker-compose.yml up --build
           docker image ls
           #docker-compose -f docker-compose.yml push
 
