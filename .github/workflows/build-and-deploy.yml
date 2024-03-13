@@ -58,11 +58,10 @@ jobs:
 
       # - name: Push Docker Image
       #   run: docker-compose -f docker-compose.yml push
-      - name: Tag and Push Redis Image
+      - name: Build and Push Docker Image
         run: |
           docker-compose -f docker-compose.yml build --no-cache
-          docker tag redis:latest registry.digitalocean.com/dcr-samuel/redis:latest
-          docker push redis:latest
+          docker-compose -f docker-compose.yml push
 
 
 
