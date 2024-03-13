@@ -105,6 +105,10 @@ jobs:
     needs: build_and_push
     
     steps:
+
+      - name: List files in directory
+        run: ls -R
+
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -122,5 +126,5 @@ jobs:
             # # Build and start containers defined in docker-compose.yml
             # TAG=$(echo $GITHUB_SHA | head -c7) docker-compose -f docker-compose.yml up -d
 
-            - name: List files in directory
-              run: ls -R
+      - name: List files in directory
+        run: ls -R
