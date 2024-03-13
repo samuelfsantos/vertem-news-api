@@ -116,8 +116,8 @@ jobs:
             # Login to registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
             # Stop and remove old containers defined in docker-compose.yml
-            docker-compose -f /path/to/your/docker-compose.yml down
+            docker-compose -f docker-compose.yml down
             # Pull the latest images
-            docker-compose -f /path/to/your/docker-compose.yml pull
+            docker-compose -f docker-compose.yml pull
             # Build and start containers defined in docker-compose.yml
-            docker-compose -f /path/to/your/docker-compose.yml up -d
+            docker-compose -f docker-compose.yml up -d
