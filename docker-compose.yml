@@ -19,7 +19,7 @@ services:
       - cache-vertem
       
   cache-vertem:
-    image: mcr.microsoft.com/oss/bitnami/redis:latest
+    image: mcr.microsoft.com/oss/bitnami/redis:6.0.8
     container_name: vertem-news-redis
     restart: always
     ports:
