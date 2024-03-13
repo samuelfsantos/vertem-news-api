@@ -113,11 +113,14 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           envs: IMAGE_NAME_API,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
           script: |
-            # Login to registry
-            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-            # Stop and remove old containers defined in docker-compose.yml
-            docker-compose -f docker-compose.yml down 
-            # Pull the latest images
-            docker-compose -f docker-compose.yml pull
-            # Build and start containers defined in docker-compose.yml
-            TAG=$(echo $GITHUB_SHA | head -c7) docker-compose -f docker-compose.yml up -d
+            # # Login to registry
+            # docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            # # Stop and remove old containers defined in docker-compose.yml
+            # docker-compose -f docker-compose.yml down 
+            # # Pull the latest images
+            # docker-compose -f docker-compose.yml pull
+            # # Build and start containers defined in docker-compose.yml
+            # TAG=$(echo $GITHUB_SHA | head -c7) docker-compose -f docker-compose.yml up -d
+
+            - name: List files in directory
+              run: ls -R
