@@ -19,6 +19,7 @@ on:
 env:
   REGISTRY: "registry.digitalocean.com/dcr-samuel"
   IMAGE_NAME_API: "vertem-news-api"
+  IMAGE_NAME_CACHE: "redis:latest"
   CONTAINER_NAME_CACHE: "vertem-news-redis"
 
 #3
@@ -51,24 +52,8 @@ jobs:
           docker-compose -f docker-compose.yml build --no-cache --build-arg TAG=$TAG
           docker image ls
 
-      # - name: Install Docker Compose
-      #   run: |
-      #     sudo rm /usr/local/bin/docker-compose
-      #     sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-      #     sudo chmod +x /usr/local/bin/docker-compose
-
       - name: Push Docker Image
         run: docker-compose -f docker-compose.yml push
-
-      # - name: Build and Push Docker Image
-      #   run: |
-      #     docker-compose -f docker-compose.yml up
-      #     docker image ls
-          #docker-compose -f docker-compose.yml push
-
-      # - name: Build and Deploy with Docker Compose
-      #   run: |
-      #     docker-compose -f docker-compose.yml up -d
 
 
        
@@ -106,9 +91,6 @@ jobs:
     
     steps:
 
-      - name: List files in directory
-        run: ls -R
-
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -126,5 +108,25 @@ jobs:
             # # Build and start containers defined in docker-compose.yml
             # TAG=$(echo $GITHUB_SHA | head -c7) docker-compose -f docker-compose.yml up -d
 
-      - name: List files in directory
-        run: ls -R
+            # Login to registry
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            
+            # Stop old containers
+            docker stop $(echo $IMAGE_NAME_API)
+            docker stop $(echo $CONTAINER_NAME_CACHE)
+            
+            # Remove old containers
+            docker rm $(echo $IMAGE_NAME_API)
+            docker rm $(echo $CONTAINER_NAME_CACHE)
+            
+            # Run new containers
+            docker run -dt -p 5008:8080 \
+            --restart always \
+            --name $(echo $IMAGE_NAME_API) \
+            $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
+            
+            docker run -dt -p 5009:6379 \
+            --restart always \
+            --name $(echo $CONTAINER_NAME_CACHE) \
+            $(echo IMAGE_NAME_CACHE)
+
