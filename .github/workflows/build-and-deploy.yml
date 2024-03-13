@@ -48,8 +48,12 @@ jobs:
           TAG: ${{ env.TAG }}
         run: docker-compose -f docker-compose.yml build --no-cache --build-arg TAG=$TAG
 
-      - name: Push Docker Image
-        run: docker-compose -f docker-compose.yml push 
+      # - name: Push Docker Image
+      #   run: docker-compose -f docker-compose.yml push 
+      - name: Push API image to Docker Registry
+        run: |
+          echo ${{ secrets.PASSWORD }} | docker login -u ${{ secrets.USERNAME }} --password-stdin registry.digitalocean.com/dcr-samuel
+          docker-compose -f docker-compose.yml push
 
        
   # deploy:
