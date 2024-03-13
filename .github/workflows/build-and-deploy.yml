@@ -26,47 +26,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:        
-      # - name: Checkout the repo 
-      #   uses: actions/checkout@v2        
+      - name: Checkout the repo 
+        uses: actions/checkout@v2        
         
-      # - name: Install doctl
-      #   uses: digitalocean/action-doctl@v2
-      #   with:
-      #     token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
     
-      # - name: Log in to DigitalOcean Container Registry with short-lived credentials
-      #   run: doctl registry login --expiry-seconds 600
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 600
       
       # #- name: Remove all old images from other repositories
       # #  run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME_API)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME_API) $(doctl registry repository list-tags $(echo $IMAGE_NAME_API) | grep -o "sha.*") --force; else echo "No repository"; fi
 
-      # - name: Set TAG environment variable
-      #   run: echo TAG=$(echo $GITHUB_SHA | head -c7) >> $GITHUB_ENV
+      - name: Set TAG environment variable
+        run: echo TAG=$(echo $GITHUB_SHA | head -c7) >> $GITHUB_ENV
 
-      # - name: Build Docker Image
-      #   env:
-      #     TAG: ${{ env.TAG }}
-      #   run: docker-compose -f docker-compose.yml build --no-cache --build-arg TAG=$TAG
+      - name: Build Docker Image
+        env:
+          TAG: ${{ env.TAG }}
+        run: docker-compose -f docker-compose.yml build --no-cache --build-arg TAG=$TAG
 
-      # # - name: Push Docker Image
-      # #   run: docker-compose -f docker-compose.yml push 
-      # - name: Push API image to Docker Registry
-      #   run: |
-      #     echo ${{ secrets.PASSWORD }} | docker login -u ${{ secrets.USERNAME }} --password-stdin registry.digitalocean.com/dcr-samuel
-      #     docker-compose -f docker-compose.yml push
+      - name: Push Docker Image
+        run: docker-compose -f docker-compose.yml push 
 
 
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
 
-      - name: Log in to DigitalOcean Registry
-        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login registry.digitalocean.com -u "${{ secrets.USERNAME }}" --password-stdin
 
-      - name: Build and push API image
-        run: |
-          DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml build
-          DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml push
 
 
 
