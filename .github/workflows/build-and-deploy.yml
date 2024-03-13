@@ -50,17 +50,17 @@ jobs:
       # - name: Build Docker Image
       #   run: docker-compose -f docker-compose.yml build --no-cache
 
-      - name: Install Docker Compose
-        run: |
-          sudo rm /usr/local/bin/docker-compose
-          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
+      # - name: Install Docker Compose
+      #   run: |
+      #     sudo rm /usr/local/bin/docker-compose
+      #     sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      #     sudo chmod +x /usr/local/bin/docker-compose
 
       # - name: Push Docker Image
       #   run: docker-compose -f docker-compose.yml push
       - name: Build and Push Docker Image
         run: |
-          docker-compose -f docker-compose.yml up --build
+          docker-compose -f docker-compose.yml up --no-cache
           docker image ls
           #docker-compose -f docker-compose.yml push
 
