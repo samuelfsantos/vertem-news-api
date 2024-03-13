@@ -54,7 +54,7 @@ jobs:
       #   run: docker-compose -f docker-compose.yml push
       - name: Tag and Push Redis Image
         run: |
-          docker-compose -f docker-compose.yml build cache-vertem
+          docker-compose -f docker-compose.yml build cache-vertem --no-cache
           docker tag redis:latest registry.digitalocean.com/dcr-samuel/redis:latest
           docker push registry.digitalocean.com/dcr-samuel/redis:latest
 
