@@ -11,7 +11,7 @@ namespace Vertem.News.Api.Configurations
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = configuration.GetConnectionString("Cache");
-                //options.InstanceName = $"CacheOficinaTech{env.EnvironmentName}";
+                options.InstanceName = $"CacheOficinaTech{env.EnvironmentName}";
             });
         }
     }
