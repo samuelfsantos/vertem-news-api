@@ -6,7 +6,7 @@ namespace Vertem.News.Api.Configurations
     {
         public static void AddCacheConfig(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
-            //services.AddDistributedMemoryCache();
+            services.AddDistributedMemoryCache();
 
             services.AddStackExchangeRedisCache(options =>
             {
