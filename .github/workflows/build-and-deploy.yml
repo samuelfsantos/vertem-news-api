@@ -45,15 +45,27 @@ jobs:
       - name: Set TAG environment variable
         run: echo TAG=$(echo $GITHUB_SHA | head -c7) >> $GITHUB_ENV
 
-      - name: Build Docker Image
+      # - name: Build Docker Image
+      #   env:
+      #     TAG: ${{ env.TAG }}
+      #   run: |
+      #     docker-compose -f docker-compose.yml build --no-cache --build-arg TAG=$TAG
+      #     docker image ls
+
+      # - name: Push Docker Image
+      #   run: docker-compose -f docker-compose.yml push
+
+      - name: Build and Push API Image
         env:
           TAG: ${{ env.TAG }}
         run: |
-          docker-compose -f docker-compose.yml build --no-cache --build-arg TAG=$TAG
-          docker image ls
+          docker-compose build api-vertem --no-cache --build-arg TAG=$TAG
+          docker-compose push api-vertem
 
-      - name: Push Docker Image
-        run: docker-compose -f docker-compose.yml push
+      - name: Build and Push Redis Image
+        run: |
+          docker-compose build cache-vertem --no-cache
+          docker-compose push cache-vertem
 
 
        
@@ -91,19 +103,23 @@ jobs:
     
     steps:
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-
-      - name: Deploy to Digital Ocean droplet via SSH action
-        uses: appleboy/ssh-action@v0.1.8
+      - name: SSH into Droplet
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          envs: IMAGE_NAME_API,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
           script: |
+            docker-compose -f docker-compose.yml up -d
+
+      # - name: Deploy to Digital Ocean droplet via SSH action
+      #   uses: appleboy/ssh-action@v0.1.8
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.USERNAME }}
+      #     password: ${{ secrets.PASSWORD }}
+      #     envs: IMAGE_NAME_API,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
+      #     script: |
             # echo "Conteúdo do diretório:"
             # ls
 
@@ -117,7 +133,7 @@ jobs:
             # TAG=$(echo $GITHUB_SHA | head -c7) docker-compose -f docker-compose.yml up -d
 
             # Login to registry
-            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            # docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
             
             # Stop old containers
             # docker stop $(echo $IMAGE_NAME_API)
@@ -146,12 +162,9 @@ jobs:
             # redis:latest
 
             #docker-compose -f docker-compose.yml up -d --no-deps cache-vertem
-
-            docker-compose -f docker-compose.yml down
-
-            docker-compose -f docker-compose.yml pull
-
-            docker-compose -f docker-compose.yml up -d
+            # docker-compose -f docker-compose.yml down
+            # docker-compose -f docker-compose.yml pull
+            # docker-compose -f docker-compose.yml up -d
 
 
             
