@@ -97,7 +97,9 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          envs: IMAGE_NAME_API,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
+          envs: |
+            IMAGE_NAME_API, IMAGE_NAME_CACHE, CONTAINER_NAME_CACHE
+            REGISTRY, {{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}, GITHUB_SHA
           script: |
             # echo "Conteúdo do diretório:"
             # ls
@@ -115,34 +117,32 @@ jobs:
             # docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
             
             # Stop old containers
-            # docker stop $(echo $IMAGE_NAME_API)
-            # docker stop $(echo $CONTAINER_NAME_CACHE)
+            docker stop $(echo $IMAGE_NAME_API)
+            docker stop $(echo $CONTAINER_NAME_CACHE)
             
             # Remove old containers
-            # docker rm $(echo $IMAGE_NAME_API)
-            # docker rm $(echo $CONTAINER_NAME_CACHE)
+            docker rm $(echo $IMAGE_NAME_API)
+            docker rm $(echo $CONTAINER_NAME_CACHE)
             
             # Run new containers
-            # docker run -dt -p 5008:8080 \
-            # --restart always \
-            # --name $(echo $IMAGE_NAME_API) \
-            # $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
-            
-
+            docker run -dt -p 5008:8080 \
+            --restart always \
+            --name $(echo $IMAGE_NAME_API) \
+            $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
 
             # docker run -dt -p 6379:6379 \
-            # --restart always \
-            # --name $(echo $CONTAINER_NAME_CACHE) \
-            # $(echo IMAGE_NAME_CACHE)
+            --restart always \
+            --name $(echo $CONTAINER_NAME_CACHE) \
+            $(echo $IMAGE_NAME_CACHE)
 
             # docker run -dt -p 6379:6379 \
             # --restart always \
             # --name vertem-news-redis \
             # redis:latest
 
-            docker-compose -f docker-compose.yml down
-            docker-compose -f docker-compose.yml pull
-            docker-compose -f docker-compose.yml up -d
+            # docker-compose -f docker-compose.yml down
+            # docker-compose -f docker-compose.yml pull
+            # docker-compose -f docker-compose.yml up -d
 
 
             
