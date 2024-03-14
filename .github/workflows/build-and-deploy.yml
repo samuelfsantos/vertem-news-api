@@ -107,12 +107,12 @@ jobs:
             # Stop old containers
             docker stop $(echo $IMAGE_NAME_API)
             #docker stop $(echo $CONTAINER_NAME_CACHE)
-            docker stop redis-cache
+            docker stop redis
             
             # Remove old containers
             docker rm $(echo $IMAGE_NAME_API)
             #docker rm $(echo $CONTAINER_NAME_CACHE)
-            docker rm redis-cache
+            docker rm redis
             
             # Run new containers
             docker run -dt -p 5008:8080 \
@@ -132,8 +132,8 @@ jobs:
 
             docker run -dt -p 6379:6379 \
             --restart always \
-            --name redis-cache \
-            redis:latest
+            --name redis \
+            redis:alpine
 
 
 
