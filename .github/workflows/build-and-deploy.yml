@@ -60,7 +60,7 @@ jobs:
           TAG: ${{ env.TAG }}
         run: |
           docker-compose -f docker-compose.yml build --no-cache --build-arg TAG=$TAG api-vertem
-          docker-compose -f docker-compose.yml push api-vertem:${TAG}
+          docker-compose -f docker-compose.yml push api-vertem
 
       - name: Build and Push Redis Image
         run: |
