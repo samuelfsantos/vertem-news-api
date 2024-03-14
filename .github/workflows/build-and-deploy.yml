@@ -99,8 +99,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           envs: IMAGE_NAME_API,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
           script: |
-            echo "Conteúdo do diretório:"
-            ls
+            # echo "Conteúdo do diretório:"
+            # ls
 
             # # Login to registry
             # docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
@@ -112,7 +112,7 @@ jobs:
             # TAG=$(echo $GITHUB_SHA | head -c7) docker-compose -f docker-compose.yml up -d
 
             # Login to registry
-            #docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
             
             # Stop old containers
             # docker stop $(echo $IMAGE_NAME_API)
@@ -141,6 +141,21 @@ jobs:
             # redis:latest
 
             #docker-compose -f docker-compose.yml up -d --no-deps cache-vertem
+
+            docker-compose -f docker-compose.yml down
+
+            echo "Conteúdo do diretório 1:"
+            ls
+
+            docker-compose -f docker-compose.yml pull
+
+            echo "Conteúdo do diretório 2:"
+            ls
+
+            docker-compose -f docker-compose.yml up -d
+
+            echo "Conteúdo do diretório 3:"
+            ls
 
             
 
