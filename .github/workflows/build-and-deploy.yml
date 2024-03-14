@@ -144,18 +144,10 @@ jobs:
 
             docker-compose -f docker-compose.yml down
 
-            echo "Conteúdo do diretório 1:"
-            ls
-
             docker-compose -f docker-compose.yml pull
-
-            echo "Conteúdo do diretório 2:"
-            ls
 
             docker-compose -f docker-compose.yml up -d
 
-            echo "Conteúdo do diretório 3:"
-            ls
 
             
 
