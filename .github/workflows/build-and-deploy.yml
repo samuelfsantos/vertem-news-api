@@ -101,20 +101,8 @@ jobs:
             IMAGE_NAME_API, IMAGE_NAME_CACHE, CONTAINER_NAME_CACHE
             REGISTRY, {{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}, GITHUB_SHA
           script: |
-            # echo "Conteúdo do diretório:"
-            # ls
-
-            # # Login to registry
-            # docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-            # # Stop and remove old containers defined in docker-compose.yml
-            # docker-compose -f docker-compose.yml down 
-            # # Pull the latest images
-            # docker-compose -f docker-compose.yml pull
-            # # Build and start containers defined in docker-compose.yml
-            # TAG=$(echo $GITHUB_SHA | head -c7) docker-compose -f docker-compose.yml up -d
-
             # Login to registry
-            # docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
             
             # Stop old containers
             docker stop $(echo $IMAGE_NAME_API)
@@ -140,9 +128,6 @@ jobs:
             # --name vertem-news-redis \
             # redis:latest
 
-            # docker-compose -f docker-compose.yml down
-            # docker-compose -f docker-compose.yml pull
-            # docker-compose -f docker-compose.yml up -d
 
 
             
