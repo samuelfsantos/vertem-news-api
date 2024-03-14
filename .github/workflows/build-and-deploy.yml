@@ -59,12 +59,12 @@ jobs:
         env:
           TAG: ${{ env.TAG }}
         run: |
-          docker-compose build api-vertem --no-cache --build-arg TAG=$TAG
+          docker-compose build api-vertem --build-arg TAG=$TAG
           docker-compose push api-vertem
 
       - name: Build and Push Redis Image
         run: |
-          docker-compose build cache-vertem --no-cache
+          docker-compose build cache-vertem
           docker-compose push cache-vertem
 
 
