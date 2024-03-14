@@ -24,3 +24,9 @@ services:
     restart: always
     ports:
       - '6379:6379'
+    networks:
+      - rede-vertem
+      
+networks:
+  rede-vertem:
+    driver: bridge

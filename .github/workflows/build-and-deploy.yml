@@ -99,6 +99,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           envs: IMAGE_NAME_API,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
           script: |
+            ls
+
             # # Login to registry
             # docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
             # # Stop and remove old containers defined in docker-compose.yml
@@ -109,7 +111,7 @@ jobs:
             # TAG=$(echo $GITHUB_SHA | head -c7) docker-compose -f docker-compose.yml up -d
 
             # Login to registry
-            docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
+            #docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
             
             # Stop old containers
             # docker stop $(echo $IMAGE_NAME_API)
@@ -137,5 +139,7 @@ jobs:
             # --name vertem-news-redis \
             # redis:latest
 
-            docker-compose -f docker-compose.yml up -d --no-deps cache-vertem
+            #docker-compose -f docker-compose.yml up -d --no-deps cache-vertem
+
+            
 
