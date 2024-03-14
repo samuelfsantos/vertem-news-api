@@ -99,6 +99,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           envs: IMAGE_NAME_API,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
           script: |
+            echo "Conteúdo do diretório:"
             ls
 
             # # Login to registry
