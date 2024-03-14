@@ -106,11 +106,13 @@ jobs:
             
             # Stop old containers
             docker stop $(echo $IMAGE_NAME_API)
-            docker stop $(echo $CONTAINER_NAME_CACHE)
+            #docker stop $(echo $CONTAINER_NAME_CACHE)
+            docker stop redis-cache
             
             # Remove old containers
             docker rm $(echo $IMAGE_NAME_API)
-            docker rm $(echo $CONTAINER_NAME_CACHE)
+            #docker rm $(echo $CONTAINER_NAME_CACHE)
+            docker rm redis-cache
             
             # Run new containers
             docker run -dt -p 5008:8080 \
@@ -118,17 +120,20 @@ jobs:
             --name $(echo $IMAGE_NAME_API) \
             $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
 
-            docker run -dt -p 6379:6379 \
-            --restart always \
-            --name $(echo $CONTAINER_NAME_CACHE) \
-            $(echo $IMAGE_NAME_CACHE)
+            # docker run -dt -p 6379:6379 \
+            # --restart always \
+            # --name $(echo $CONTAINER_NAME_CACHE) \
+            # $(echo $IMAGE_NAME_CACHE)
 
             # docker run -dt -p 6379:6379 \
             # --restart always \
             # --name vertem-news-redis \
             # redis:latest
 
-            docker run --name redis-cache -p 6379:6379 -d redis
+            docker run -dt -p 6379:6379 \
+            --restart always \
+            --name redis-cache \
+            redis:latest
 
 
 
