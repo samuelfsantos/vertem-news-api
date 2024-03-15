@@ -16,11 +16,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:5008
     depends_on:
-      - redis
+      - cache-vertem
       
-  redis:
+  cache-vertem:
     image: redis:alpine
-    container_name: redis
+    container_name: vertem-news-redis
     restart: always
     ports:
       - '6379:6379'      

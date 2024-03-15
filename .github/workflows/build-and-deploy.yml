@@ -21,6 +21,7 @@ env:
   IMAGE_NAME_API: "vertem-news-api"
   IMAGE_NAME_CACHE: "redis:latest"
   CONTAINER_NAME_CACHE: "vertem-news-redis"
+  NETWORK_NAME: "rede-vertem"
 
 #3
 jobs:
@@ -54,36 +55,7 @@ jobs:
 
       - name: Push Docker Image
         run: docker-compose -f docker-compose.yml push
-
-
-       
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: build_and_push
-    
-  #   steps:
-  #     - name: Deploy to Digital Ocean droplet via SSH action
-  #       uses: appleboy/ssh-action@v0.1.8
-  #       with:
-  #         host: ${{ secrets.HOST }}
-  #         username: ${{ secrets.USERNAME }}
-  #         password: ${{ secrets.PASSWORD }}
-  #         envs: IMAGE_NAME_API,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
-  #         script: |
-  #           # Login to registry
-  #           docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-  #           # Stop running container
-  #           docker stop $(echo $IMAGE_NAME_API)
-  #           # Remove old container
-  #           docker rm $(echo $IMAGE_NAME_API)
-  #           # # Run a new container from a new image
-  #           # docker run -dt -p 5008:8080 \
-  #           # --restart always \
-  #           # --name $(echo $IMAGE_NAME_API) \
-  #           # $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
-  #           docker-compose -f docker-compose.yml up -d
-            
-
+                  
             
   deploy:
     runs-on: ubuntu-latest
@@ -98,7 +70,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           envs:
-            IMAGE_NAME_API, IMAGE_NAME_CACHE, CONTAINER_NAME_CACHE,
+            IMAGE_NAME_API, IMAGE_NAME_CACHE, CONTAINER_NAME_CACHE, NETWORK_NAME
             REGISTRY, {{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}, GITHUB_SHA
           script: |
             # Login to registry
@@ -115,30 +87,31 @@ jobs:
             docker rm redis
 
             # Create network
-            docker network create rede-vertem
+            docker network create $(echo $NETWORK_NAME)
             
             # Run new containers
             docker run -dt -p 5008:8080 \
             --restart always \
             --name $(echo $IMAGE_NAME_API) \
-            --network rede-vertem \
+            --network $(echo $NETWORK_NAME) \
             $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
 
-            # docker run -dt -p 6379:6379 \
-            # --restart always \
-            # --name $(echo $CONTAINER_NAME_CACHE) \
-            # $(echo $IMAGE_NAME_CACHE)
+            docker run -dt -p 6379:6379 \
+            --restart always \
+            --name $(echo $CONTAINER_NAME_CACHE) \
+            --network $(echo $NETWORK_NAME) \
+            $(echo $IMAGE_NAME_CACHE)
 
             # docker run -dt -p 6379:6379 \
             # --restart always \
             # --name vertem-news-redis \
             # redis:latest
 
-            docker run -dt -p 6379:6379 \
-            --restart always \
-            --name redis \
-            --network rede-vertem \
-            redis:latest
+            # docker run -dt -p 6379:6379 \
+            # --restart always \
+            # --name redis \
+            # --network rede-vertem \
+            # redis:latest
 
 
 
