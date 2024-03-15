@@ -17,10 +17,18 @@ services:
       - ASPNETCORE_URLS=http://*:5008
     depends_on:
       - cache-vertem
+    networks:
+      - rede-vertem
       
   cache-vertem:
     image: redis:alpine
     container_name: vertem-news-redis
     restart: always
     ports:
-      - '6379:6379'      
+      - '5009:5009'
+    networks:
+      - rede-vertem
+      
+networks:
+  rede-vertem:
+    driver: bridge

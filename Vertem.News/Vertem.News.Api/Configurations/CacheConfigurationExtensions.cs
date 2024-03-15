@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
-using StackExchange.Redis;
 
 namespace Vertem.News.Api.Configurations
 {
@@ -18,10 +16,6 @@ namespace Vertem.News.Api.Configurations
             });
 
             //services.Add(ServiceDescriptor.Singleton<IDistributedCache, RedisCache>());
-
-            //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("redis:6379"));
-
-
         }
     }
 }
