@@ -11,15 +11,15 @@ namespace Vertem.News.Api.Configurations
         {
             //services.AddDistributedMemoryCache();
 
-            //services.AddStackExchangeRedisCache(options =>
-            //{
-            //    options.Configuration = configuration.GetConnectionString("Cache");
-            //    options.InstanceName = $"CacheOficinaTech{env.EnvironmentName}";
-            //});
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("Cache");
+                options.InstanceName = $"CacheOficinaTech{env.EnvironmentName}";
+            });
 
             //services.Add(ServiceDescriptor.Singleton<IDistributedCache, RedisCache>());
 
-            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("redis:6379"));
+            //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("redis:6379"));
 
 
         }
