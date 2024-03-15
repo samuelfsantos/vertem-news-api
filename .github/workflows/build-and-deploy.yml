@@ -95,7 +95,7 @@ jobs:
             --network $(echo $NETWORK_NAME) \
             $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
 
-            docker run -dt -p 5010:6379 \
+            docker run -d -p 5010:6379 \
             --restart always \
             --name $(echo $CONTAINER_NAME_CACHE) \
             --network $(echo $NETWORK_NAME) \
