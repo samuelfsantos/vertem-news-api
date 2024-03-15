@@ -77,12 +77,12 @@ jobs:
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
             
             # Stop old containers
-            docker stop $(echo $IMAGE_NAME_API)
-            docker stop $(echo $CONTAINER_NAME_CACHE)
+            #docker stop $(echo $IMAGE_NAME_API)
+            #docker stop $(echo $CONTAINER_NAME_CACHE)
             
             # Remove old containers
-            docker rm $(echo $IMAGE_NAME_API)
-            docker rm $(echo $CONTAINER_NAME_CACHE)
+            #docker rm $(echo $IMAGE_NAME_API)
+            #docker rm $(echo $CONTAINER_NAME_CACHE)
 
             # Create network
             docker network create $(echo $NETWORK_NAME)
