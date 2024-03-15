@@ -21,6 +21,7 @@ namespace Vertem.News.Api.Configurations
 
             services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("redis:6379"));
 
+
         }
     }
 }

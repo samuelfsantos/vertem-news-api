@@ -113,11 +113,15 @@ jobs:
             docker rm $(echo $IMAGE_NAME_API)
             #docker rm $(echo $CONTAINER_NAME_CACHE)
             docker rm redis
+
+            # Create network
+            docker network create rede-vertem
             
             # Run new containers
             docker run -dt -p 5008:8080 \
             --restart always \
             --name $(echo $IMAGE_NAME_API) \
+            --network rede-vertem \
             $(echo $REGISTRY)/$(echo $IMAGE_NAME_API):$(echo $GITHUB_SHA | head -c7)
 
             # docker run -dt -p 6379:6379 \
@@ -133,7 +137,8 @@ jobs:
             docker run -dt -p 6379:6379 \
             --restart always \
             --name redis \
-            redis:alpine
+            --network rede-vertem \
+            redis:latest
 
 
 
