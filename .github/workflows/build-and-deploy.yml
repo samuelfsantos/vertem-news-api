@@ -78,13 +78,11 @@ jobs:
             
             # Stop old containers
             docker stop $(echo $IMAGE_NAME_API)
-            #docker stop $(echo $CONTAINER_NAME_CACHE)
-            docker stop redis
+            docker stop $(echo $CONTAINER_NAME_CACHE)
             
             # Remove old containers
             docker rm $(echo $IMAGE_NAME_API)
-            #docker rm $(echo $CONTAINER_NAME_CACHE)
-            docker rm redis
+            docker rm $(echo $CONTAINER_NAME_CACHE)
 
             # Create network
             docker network create $(echo $NETWORK_NAME)
