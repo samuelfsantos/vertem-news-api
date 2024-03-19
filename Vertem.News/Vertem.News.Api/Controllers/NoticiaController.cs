@@ -107,10 +107,19 @@ namespace Vertem.News.Api.Controllers
                     var results = await _mediator.Send(new GetNoticiaQuery());
                     await _cache.SaveGenericItemAsync(results.MultipleData, cacheKey, expirationInSeconds: 20);
 
-                    return Ok(results.MultipleData);
+                    return Ok(new
+                    {
+                        EstaCacheado = false,
+                        Results = results.MultipleData
+                    });
                 }
                 else
-                    return Ok(noticiasEmCache);
+                    return Ok(new
+                    {
+                        EstaCacheado = true,
+                        Results = noticiasEmCache
+                    });
+
             }
             catch (Exception ex)
             {
