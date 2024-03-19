@@ -24,16 +24,12 @@ namespace Vertem.News.Api.Common
 
         public static async Task<RequestResult<TResponse>?> GetCachedItemAsync<TResponse>(this IDistributedCache cache, string key) where TResponse : BaseOutput
         {
-            var dataInBytes = await cache.GetAsync(key);
+            var dataInJson = await cache.GetStringAsync(key);
 
-            if (dataInBytes is null)
-            {
+            if (String.IsNullOrEmpty(dataInJson))
                 return null;
-            }
 
-            var rawJson = System.Text.Encoding.UTF8.GetString(dataInBytes);
-
-            return JsonSerializer.Deserialize<RequestResult<TResponse>?>(rawJson);
+            return JsonSerializer.Deserialize<RequestResult<TResponse>?>(dataInJson);
         }
 
         //public static async Task SaveItemAsync<T>(this IDistributedCache cache, T item, string key, int expirationInSeconds)
@@ -49,10 +45,9 @@ namespace Vertem.News.Api.Common
 
         public static async Task SaveItemAsync<TResponse>(this IDistributedCache cache, RequestResult<TResponse> item, string key, int expirationInSeconds) where TResponse : BaseOutput
         {
-            var dataJson = JsonSerializer.Serialize(item);
-            var dataInBytes = System.Text.Encoding.UTF8.GetBytes(dataJson);
+            var dataInJson = JsonSerializer.Serialize(item);
 
-            await cache.SetAsync(key, dataInBytes, new DistributedCacheEntryOptions
+            await cache.SetStringAsync(key, dataInJson, new DistributedCacheEntryOptions
             {
                 AbsoluteExpiration = DateTimeOffset.UtcNow.AddSeconds(expirationInSeconds)
             });
