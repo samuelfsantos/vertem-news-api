@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json;
 using Microsoft.Extensions.Caching.Distributed;
 
 
@@ -17,12 +17,12 @@ namespace Vertem.News.Api.Common
 
             var rawJson = System.Text.Encoding.UTF8.GetString(dataInBytes);
 
-            return JsonSerializer.Deserialize<T>(rawJson);
+            return JsonConvert.DeserializeObject<T>(rawJson);
         }
 
         public static async Task SaveItemAsync<T>(this IDistributedCache cache, T item, string key, int expirationInSeconds)
         {
-            var dataJson = JsonSerializer.Serialize(item);
+            var dataJson = JsonConvert.SerializeObject(item);
             var dataInBytes = System.Text.Encoding.UTF8.GetBytes(dataJson);
 
             await cache.SetAsync(key, dataInBytes, new DistributedCacheEntryOptions

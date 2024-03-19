@@ -14,11 +14,6 @@ namespace Vertem.News.Domain.Outputs
         public string? ImgUrl { get; private set; }
         public string? Autor { get; private set; }
 
-        public NoticiaOutput()
-        {
-                
-        }
-
         public NoticiaOutput(
             Guid id,
             string titulo,
