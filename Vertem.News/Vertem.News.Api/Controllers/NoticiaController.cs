@@ -89,7 +89,7 @@ namespace Vertem.News.Api.Controllers
                 const string cacheKey = "ObterTodasNoticias";
                 var noticiasEmCache = await _cache.GetCachedItemAsync<NoticiaOutput>(cacheKey);
 
-                if (noticiasEmCache is null)
+                if (noticiasEmCache == null)
                 {
                     var results = await _mediator.Send(new GetNoticiaQuery());
                     await _cache.SaveItemAsync(results, cacheKey, expirationInSeconds: 20);
