@@ -87,7 +87,7 @@ namespace Vertem.News.Api.Controllers
             try
             {
                 const string cacheKey = "ObterTodasNoticias";
-                var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
+                var noticiasEmCache = await _cache.GetCachedItemAsync<NoticiaOutput>(cacheKey);
 
                 if (noticiasEmCache is null)
                 {
@@ -111,7 +111,7 @@ namespace Vertem.News.Api.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             string cacheKey = $"ObterNoticiaPeloId-{id}";
-            var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
+            var noticiasEmCache = await _cache.GetCachedItemAsync<NoticiaOutput>(cacheKey);
 
             if (noticiasEmCache is null)
             {
@@ -128,7 +128,7 @@ namespace Vertem.News.Api.Controllers
         public async Task<IActionResult> GetByCategory(string category)
         {
             const string cacheKey = "ObterNoticiasPelaCategoria";
-            var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
+            var noticiasEmCache = await _cache.GetCachedItemAsync<NoticiaOutput>(cacheKey);
 
             if (noticiasEmCache is null)
             {
@@ -145,7 +145,7 @@ namespace Vertem.News.Api.Controllers
         public async Task<IActionResult> GetBySource(string source)
         {
             const string cacheKey = "ObterNoticiasPelaFonte";
-            var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
+            var noticiasEmCache = await _cache.GetCachedItemAsync<NoticiaOutput>(cacheKey);
 
             if (noticiasEmCache is null)
             {
@@ -162,7 +162,7 @@ namespace Vertem.News.Api.Controllers
         public async Task<IActionResult> GetByKeyword(string keyword)
         {
             const string cacheKey = "ObterNoticiasPelaPalavraChave";
-            var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
+            var noticiasEmCache = await _cache.GetCachedItemAsync<NoticiaOutput>(cacheKey);
 
             if (noticiasEmCache is null)
             {
