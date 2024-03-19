@@ -6,6 +6,10 @@ using Vertem.News.Application.Commands;
 using Vertem.News.Domain.Enums;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.AspNetCore.Authorization;
+using Vertem.News.Api.Common;
+using Vertem.News.Domain.Outputs;
+using Vertem.News.Infra.Responses;
+using Vertem.News.Services.NewsApiOrg.Models;
 
 namespace Vertem.News.Api.Controllers
 {
@@ -36,12 +40,19 @@ namespace Vertem.News.Api.Controllers
                             model.Autor);
             var requestResult = await _mediator.Send(command);
 
+            await _cache.RemoveAsync("ObterTodasNoticias");
+            await _cache.RemoveAsync("ObterNoticiasPelaCategoria");
+            await _cache.RemoveAsync("ObterNoticiasPelaFonte");
+            await _cache.RemoveAsync("ObterNoticiasPelaPalavraChave");
+
             return GetCustomResponseSingleData(requestResult, nameof(GetById), HttpContext.Request.Path.Value);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, InsertNoticiaViewModel model)
         {
+            string cacheKey = $"ObterNoticiaPeloId-{id}";
+
             var command = new UpdateNoticiaCommand(
                             id,
                             model.Titulo,
@@ -53,6 +64,7 @@ namespace Vertem.News.Api.Controllers
                             model.ImgUrl,
                             model.Autor);
             var requestResult = await _mediator.Send(command);
+            await _cache.RemoveAsync(cacheKey);
 
             return GetCustomResponseSingleData(requestResult, failInstance: HttpContext.Request.Path.Value);
         }
@@ -60,8 +72,11 @@ namespace Vertem.News.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
+            string cacheKey = $"ObterNoticiaPeloId-{id}";
+
             var command = new DeleteNoticiaCommand(id);
             var requestResult = await _mediator.Send(command);
+            await _cache.RemoveAsync(cacheKey);
 
             return GetCustomResponseSingleData(requestResult, failInstance: HttpContext.Request.Path.Value);
         }
@@ -69,41 +84,86 @@ namespace Vertem.News.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var requestResult = await _mediator.Send(new GetNoticiaQuery());
+            const string cacheKey = "ObterTodasNoticias";
+            var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
 
-            return GetCustomResponseMultipleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+            if (noticiasEmCache is null)
+            {
+                var results = await _mediator.Send(new GetNoticiaQuery());
+                await _cache.SaveItemAsync(results, cacheKey, expirationInSeconds: 20);
+
+                return GetCustomResponseMultipleData(results, failInstance: HttpContext.Request.Path.Value);
+            }
+            else
+                return GetCustomResponseMultipleData(noticiasEmCache, failInstance: HttpContext.Request.Path.Value);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var requestResult = await _mediator.Send(new GetNoticiaQuery(id: id, singleData: true));
+            string cacheKey = $"ObterNoticiaPeloId-{id}";
+            var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
 
-            return GetCustomResponseSingleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+            if (noticiasEmCache is null)
+            {
+                var results = await _mediator.Send(new GetNoticiaQuery(id: id, singleData: true));
+                await _cache.SaveItemAsync(results, cacheKey, expirationInSeconds: 20);
+
+                return GetCustomResponseSingleData(results, failInstance: HttpContext.Request.Path.Value);
+            }
+            else
+                return GetCustomResponseSingleData(noticiasEmCache, failInstance: HttpContext.Request.Path.Value);
         }
 
         [HttpGet("category/{category}")]
         public async Task<IActionResult> GetByCategory(string category)
         {
-            var requestResult = await _mediator.Send(new GetNoticiaQuery(categoria: category));
+            const string cacheKey = "ObterNoticiasPelaCategoria";
+            var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
 
-            return GetCustomResponseMultipleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+            if (noticiasEmCache is null)
+            {
+                var results = await _mediator.Send(new GetNoticiaQuery(categoria: category));
+                await _cache.SaveItemAsync(results, cacheKey, expirationInSeconds: 20);
+
+                return GetCustomResponseMultipleData(results, failInstance: HttpContext.Request.Path.Value);
+            }
+            else
+                return GetCustomResponseMultipleData(noticiasEmCache, failInstance: HttpContext.Request.Path.Value);
         }
 
         [HttpGet("source/{source}")]
         public async Task<IActionResult> GetBySource(string source)
         {
-            var requestResult = await _mediator.Send(new GetNoticiaQuery(fonte: source));
+            const string cacheKey = "ObterNoticiasPelaFonte";
+            var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
 
-            return GetCustomResponseMultipleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+            if (noticiasEmCache is null)
+            {
+                var results = await _mediator.Send(new GetNoticiaQuery(fonte: source));
+                await _cache.SaveItemAsync(results, cacheKey, expirationInSeconds: 20);
+
+                return GetCustomResponseMultipleData(results, failInstance: HttpContext.Request.Path.Value);
+            }
+            else
+                return GetCustomResponseMultipleData(noticiasEmCache, failInstance: HttpContext.Request.Path.Value);
         }
 
         [HttpGet("search/{keyword}")]
         public async Task<IActionResult> GetByKeyword(string keyword)
         {
-            var requestResult = await _mediator.Send(new GetNoticiaPalavraChaveQuery(keyword));
+            const string cacheKey = "ObterNoticiasPelaPalavraChave";
+            var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
 
-            return GetCustomResponseMultipleData(requestResult, failInstance: HttpContext.Request.Path.Value);
+            if (noticiasEmCache is null)
+            {
+                var results = await _mediator.Send(new GetNoticiaPalavraChaveQuery(keyword));
+                await _cache.SaveItemAsync(results, cacheKey, expirationInSeconds: 20);
+
+                return GetCustomResponseMultipleData(results, failInstance: HttpContext.Request.Path.Value);
+            }
+            else
+                return GetCustomResponseMultipleData(noticiasEmCache, failInstance: HttpContext.Request.Path.Value);
         }
 
         [HttpPost("integracao-news-api-org")]
