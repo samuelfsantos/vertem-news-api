@@ -86,18 +86,31 @@ namespace Vertem.News.Api.Controllers
         {
             try
             {
-                const string cacheKey = "ObterTodasNoticias";
-                var noticiasEmCache = await _cache.GetCachedItemAsync<NoticiaOutput>(cacheKey);
+                //const string cacheKey = "ObterTodasNoticias";
+                //var noticiasEmCache = await _cache.GetCachedItemAsync<NoticiaOutput>(cacheKey);
 
-                if (noticiasEmCache == null)
+                //if (noticiasEmCache == null)
+                //{
+                //    var results = await _mediator.Send(new GetNoticiaQuery());
+                //    await _cache.SaveItemAsync(results, cacheKey, expirationInSeconds: 20);
+
+                //    return GetCustomResponseMultipleData(results, failInstance: HttpContext.Request.Path.Value);
+                //}
+                //else
+                //    return GetCustomResponseMultipleData(noticiasEmCache, failInstance: HttpContext.Request.Path.Value);
+
+                const string cacheKey = "ObterTodasNoticias";
+                var noticiasEmCache = await _cache.GetCachedGenericItemAsync<IEnumerable<NoticiaOutput>>(cacheKey);
+
+                if (noticiasEmCache is null)
                 {
                     var results = await _mediator.Send(new GetNoticiaQuery());
-                    await _cache.SaveItemAsync(results, cacheKey, expirationInSeconds: 20);
+                    await _cache.SaveGenericItemAsync(results.MultipleData, cacheKey, expirationInSeconds: 20);
 
-                    return GetCustomResponseMultipleData(results, failInstance: HttpContext.Request.Path.Value);
+                    return Ok(results.MultipleData);
                 }
                 else
-                    return GetCustomResponseMultipleData(noticiasEmCache, failInstance: HttpContext.Request.Path.Value);
+                    return Ok(noticiasEmCache);
             }
             catch (Exception ex)
             {
