@@ -1,4 +1,5 @@
-﻿using Vertem.News.Domain.Entities;
+﻿using System.Text.Json.Serialization;
+using Vertem.News.Domain.Entities;
 using Vertem.News.Infra.Base;
 
 namespace Vertem.News.Domain.Outputs
@@ -14,11 +15,13 @@ namespace Vertem.News.Domain.Outputs
         public string? ImgUrl { get; set; }
         public string? Autor { get; set; }
 
+        [JsonConstructor()]
         public NoticiaOutput()
         {
                 
         }
 
+        [JsonConstructor()]
         public NoticiaOutput(
             Guid id,
             string titulo,

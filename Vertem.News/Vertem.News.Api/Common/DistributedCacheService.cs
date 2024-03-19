@@ -45,6 +45,7 @@ namespace Vertem.News.Api.Common
 
         public static async Task SaveItemAsync<TResponse>(this IDistributedCache cache, RequestResult<TResponse> item, string key, int expirationInSeconds) where TResponse : BaseOutput
         {
+
             var dataInJson = JsonSerializer.Serialize(item);
 
             await cache.SetStringAsync(key, dataInJson, new DistributedCacheEntryOptions
