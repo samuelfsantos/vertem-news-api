@@ -84,18 +84,27 @@ namespace Vertem.News.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            const string cacheKey = "ObterTodasNoticias";
-            var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
-
-            if (noticiasEmCache is null)
+            try
             {
-                var results = await _mediator.Send(new GetNoticiaQuery());
-                await _cache.SaveItemAsync(results, cacheKey, expirationInSeconds: 20);
+                const string cacheKey = "ObterTodasNoticias";
+                var noticiasEmCache = await _cache.GetCachedItemAsync<RequestResult<NoticiaOutput>>(cacheKey);
 
-                return GetCustomResponseMultipleData(results, failInstance: HttpContext.Request.Path.Value);
+                if (noticiasEmCache is null)
+                {
+                    var results = await _mediator.Send(new GetNoticiaQuery());
+                    await _cache.SaveItemAsync(results, cacheKey, expirationInSeconds: 20);
+
+                    return GetCustomResponseMultipleData(results, failInstance: HttpContext.Request.Path.Value);
+                }
+                else
+                    return GetCustomResponseMultipleData(noticiasEmCache, failInstance: HttpContext.Request.Path.Value);
             }
-            else
-                return GetCustomResponseMultipleData(noticiasEmCache, failInstance: HttpContext.Request.Path.Value);
+            catch (Exception ex)
+            {
+                var respostaErro = new { MensagemErro = ex.Message, Error = ex.ToString() };
+
+                return BadRequest(respostaErro);
+            }            
         }
 
         [HttpGet("{id}")]
