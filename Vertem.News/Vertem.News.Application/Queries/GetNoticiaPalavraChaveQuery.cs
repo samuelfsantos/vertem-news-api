@@ -6,7 +6,7 @@ namespace Vertem.News.Application.Queries
 {
     public class GetNoticiaPalavraChaveQuery : IQuery<RequestResult<NoticiaOutput>>
     {
-        public string? PalavraChave { get; private set; }
+        public string PalavraChave { get; private set; }
 
         public GetNoticiaPalavraChaveQuery(string palavraChave)
         {

@@ -14,18 +14,6 @@ namespace Vertem.News.Infra.Data.Repositories
             _context = context;
         }
 
-        public void Delete(Noticia noticia)
-        {
-            _context.Noticias.Remove(noticia);
-        }
-
-        public async Task<Noticia> Insert(Noticia noticia)
-        {
-            var insertResult = await _context.Noticias.AddAsync(noticia);
-
-            return insertResult.Entity;
-        }
-
         public async Task<IEnumerable<Noticia>> Select(
             Guid? id = null,
             string? titulo = null,
@@ -53,11 +41,11 @@ namespace Vertem.News.Infra.Data.Repositories
             return await noticias.ToListAsync();
         }
 
-        public async Task<IEnumerable<Noticia>> Select(string palavraChave)
+        public async Task<IEnumerable<Noticia>> ObterPorPalavraChaveAsync(string palavraChave)
         {
             palavraChave = palavraChave.ToUpper();
 
-            var noticias = _context.Noticias.Where(n =>
+            var query = _context.Noticias.AsNoTracking().Where(n =>
                             n.Id.ToString().ToUpper().Contains(palavraChave) ||
                             n.Titulo.ToUpper().Contains(palavraChave) ||
                             n.Descricao.ToUpper().Contains(palavraChave) ||
@@ -66,16 +54,42 @@ namespace Vertem.News.Infra.Data.Repositories
                             n.Fonte.ToUpper().Contains(palavraChave) ||
                             (!String.IsNullOrWhiteSpace(n.ImgUrl) && n.ImgUrl.ToUpper().Contains(palavraChave)) ||
                             (!String.IsNullOrWhiteSpace(n.Autor) && n.Autor.ToUpper().Contains(palavraChave)))
-                .OrderByDescending(n => n.DataPublicacao);
+                        .OrderByDescending(n => n.DataPublicacao);
 
-            return await noticias.ToListAsync();
+            return await query.ToListAsync();
         }
 
-        public Noticia Update(Noticia noticia)
+        public async Task<IEnumerable<Noticia>> ObterPorFonteAsync(string fonte)
         {
-            var updateResult = _context.Noticias.Update(noticia);
+            fonte = fonte.ToUpper();
 
-            return updateResult.Entity;
+            var query = _context.Noticias.AsNoTracking().Where(n =>
+                            n.Fonte.ToUpper() == fonte)
+                        .OrderByDescending(n => n.DataPublicacao);
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Noticia>> ObterPorCategoriaAsync(string categoria)
+        {
+            categoria = categoria.ToUpper();
+
+            var query = _context.Noticias.AsNoTracking().Where(n =>
+                            n.Categoria.ToUpper() == categoria)
+                        .OrderByDescending(n => n.DataPublicacao);
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Noticia>> ObterPorTituloAsync(string titulo)
+        {
+            titulo = titulo.ToUpper();
+
+            var query = _context.Noticias.AsNoTracking().Where(n =>
+                            n.Titulo.ToUpper() == titulo)
+                        .OrderByDescending(n => n.DataPublicacao);
+
+            return await query.ToListAsync();
         }
     }
 }

@@ -6,6 +6,7 @@ using Vertem.News.Domain.Outputs;
 using Vertem.News.Infra.Responses;
 using System.Net;
 using Vertem.News.Domain.Enums;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Vertem.News.Application.CommandHandlers
 {
@@ -14,17 +15,26 @@ namespace Vertem.News.Application.CommandHandlers
                                         IRequestHandler<DeleteNoticiaCommand, RequestResult<NoticiaOutput>>,
                                         IRequestHandler<InsertNoticiaIntegracaoNewsApiOrgCommand, RequestResult<NoticiaOutput>>
     {
-        private readonly INoticiaRepository _repository;
+        private readonly List<ErrorModel> _errors;
         private readonly IUnitOfWork _uow;
         private readonly INewsApiOrgService _newsApiOrgService;
-        private readonly List<ErrorModel> _errors;
+        private readonly IDistributedCache _cache;
+        private readonly IGenericRepository<Noticia> _repository;
+        private readonly INoticiaRepository _noticiaRepository;
 
-        public NoticiaCommandHandler(INoticiaRepository noticiaRepository, IUnitOfWork uow, INewsApiOrgService newsApiOrgService)
+        public NoticiaCommandHandler(
+            IUnitOfWork uow, 
+            INewsApiOrgService newsApiOrgService, 
+            IDistributedCache cache, 
+            IGenericRepository<Noticia> repository,
+            INoticiaRepository noticiaRepository)
         {
-            _repository = noticiaRepository;
+            _errors = new List<ErrorModel>();
             _uow = uow;
             _newsApiOrgService = newsApiOrgService;
-            _errors = new List<ErrorModel>();
+            _cache = cache;
+            _repository = repository;
+            _noticiaRepository = noticiaRepository;
         }
 
         public async Task<RequestResult<NoticiaOutput>> Handle(InsertNoticiaCommand request, CancellationToken cancellationToken)
@@ -41,8 +51,13 @@ namespace Vertem.News.Application.CommandHandlers
                                 request.ImgUrl,
                                 request.Autor);
 
-                noticia = await _repository.Insert(noticia);
+                noticia = _repository.Adicionar(noticia);
                 await _uow.Commit();
+
+                await _cache.RemoveAsync("ObterTodasNoticias");
+                await _cache.RemoveAsync("ObterNoticiasPorCategoria");
+                await _cache.RemoveAsync("ObterNoticiasPorPalavraChave");
+                await _cache.RemoveAsync("ObterNoticiasPorFonte");
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.Created, NoticiaOutput.FromEntity(noticia), Enumerable.Empty<ErrorModel>());
             }
@@ -58,7 +73,7 @@ namespace Vertem.News.Application.CommandHandlers
         {
             try
             {
-                var noticia = (await _repository.Select(id: request.Id)).FirstOrDefault();
+                var noticia = await _repository.ObterAsync(request.Id);
                 if (noticia == null)
                     return new RequestResult<NoticiaOutput>(HttpStatusCode.NotFound, default(NoticiaOutput), _errors);
 
@@ -69,8 +84,11 @@ namespace Vertem.News.Application.CommandHandlers
                 noticia.UpdateFonte(request.Fonte);
                 noticia.UpdateImgUrl(request.ImgUrl);
                 noticia.UpdateAutor(request.Autor);
-                noticia = _repository.Update(noticia);
+
+                noticia = _repository.Modificar(noticia);
                 await _uow.Commit();
+
+                await _cache.RemoveAsync($"ObterNoticias-{request.Id}");
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, NoticiaOutput.FromEntity(noticia), Enumerable.Empty<ErrorModel>());
             }
@@ -86,12 +104,14 @@ namespace Vertem.News.Application.CommandHandlers
         {
             try
             {
-                var noticia = (await _repository.Select(id: request.Id)).FirstOrDefault();
+                var noticia = await _repository.ObterAsync(request.Id);
                 if (noticia == null)
                     return new RequestResult<NoticiaOutput>(HttpStatusCode.NotFound, default(NoticiaOutput), _errors);
 
-                _repository.Delete(noticia);
+                _repository.Remover(noticia);
                 await _uow.Commit();
+
+                await _cache.RemoveAsync($"ObterNoticias-{request.Id}");
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.NoContent, default(NoticiaOutput), _errors);
             }
@@ -135,11 +155,17 @@ namespace Vertem.News.Application.CommandHandlers
 
                 foreach (var noticia in noticias)
                 {
-                    var noticiaExistente = (await _repository.Select(titulo: noticia.Titulo)).FirstOrDefault();
+                    var noticiaExistente = await _noticiaRepository.ObterPorTituloAsync(noticia.Titulo);
                     if (noticiaExistente == null)
-                        await _repository.Insert(noticia);
+                        _repository.Adicionar(noticia);
                 }
+
                 await _uow.Commit();
+
+                await _cache.RemoveAsync("ObterTodasNoticias");
+                await _cache.RemoveAsync("ObterNoticiasPorCategoria");
+                await _cache.RemoveAsync("ObterNoticiasPorPalavraChave");
+                await _cache.RemoveAsync("ObterNoticiasPorFonte");
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
             }

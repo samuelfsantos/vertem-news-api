@@ -4,9 +4,6 @@ namespace Vertem.News.Domain.Interfaces
 {
     public interface INoticiaRepository
     {
-        void Delete(Noticia noticia);
-        Task<Noticia> Insert(Noticia noticia);
-        Noticia Update(Noticia noticia);
         Task<IEnumerable<Noticia>> Select(
                     Guid? id = null,
                     string? titulo = null,
@@ -18,6 +15,9 @@ namespace Vertem.News.Domain.Interfaces
                     string? imgUrl = null,
                     string? autor = null,
                     bool includes = false);
-        Task<IEnumerable<Noticia>> Select(string palavraChave);
+        Task<IEnumerable<Noticia>> ObterPorPalavraChaveAsync(string palavraChave);
+        Task<IEnumerable<Noticia>> ObterPorFonteAsync(string fonte);
+        Task<IEnumerable<Noticia>> ObterPorCategoriaAsync(string categoria);
+        Task<IEnumerable<Noticia>> ObterPorTituloAsync(string titulo);
     }
 }

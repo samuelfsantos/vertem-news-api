@@ -13,9 +13,10 @@ namespace Vertem.News.Api.Configurations
     {
         public static void AddDependencyInjectionConfig(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<INoticiaRepository, NoticiaRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<INewsApiOrgService, NewsApiOrgService>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<INoticiaRepository, NoticiaRepository>();
 
             services.Scan(scan => scan.FromApplicationDependencies()
                 .AddClasses(@class => @class.AssignableTo(typeof(IShallowValidator<>))).AsImplementedInterfaces())
