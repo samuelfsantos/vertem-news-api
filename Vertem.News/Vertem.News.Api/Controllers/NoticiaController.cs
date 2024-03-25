@@ -81,7 +81,7 @@ namespace Vertem.News.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var requestResult = await _mediator.Send(new GetNoticiaQuery(id));
+            var requestResult = await _mediator.Send(new GetNoticiaQuery(id, true));
 
             return GetCustomResponseSingleData(requestResult, failInstance: HttpContext.Request.Path.Value);
         }
