@@ -119,13 +119,5 @@ namespace Vertem.News.Api.Controllers
             return GetCustomResponseSingleData(requestResult, failInstance: HttpContext.Request.Path.Value);
         }
 
-        [HttpGet("sem-cache")]
-        public async Task<IActionResult> GetAllSemCache()
-        {
-            var requestResult = await _mediator.Send(new GetNoticiaSemCacheQuery());
-
-            return GetCustomResponseMultipleData(requestResult, failInstance: HttpContext.Request.Path.Value);
-        }
-
     }
 }

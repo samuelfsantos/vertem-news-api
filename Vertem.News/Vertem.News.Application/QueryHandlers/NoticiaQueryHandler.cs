@@ -13,8 +13,7 @@ namespace Vertem.News.Application.QueryHandlers
     public class NoticiaQueryHandler : IRequestHandler<GetNoticiaQuery, RequestResult<NoticiaOutput>>, 
         IRequestHandler<GetNoticiaFonteQuery, RequestResult<NoticiaOutput>>,
         IRequestHandler<GetNoticiaPalavraChaveQuery, RequestResult<NoticiaOutput>>,
-        IRequestHandler<GetNoticiaCategoriaQuery, RequestResult<NoticiaOutput>>,
-        IRequestHandler<GetNoticiaSemCacheQuery, RequestResult<NoticiaOutput>>
+        IRequestHandler<GetNoticiaCategoriaQuery, RequestResult<NoticiaOutput>>
     {
         private readonly IDistributedCache _cache;
         private readonly IGenericRepository<Noticia> _repository;
@@ -43,6 +42,9 @@ namespace Vertem.News.Application.QueryHandlers
                             return new RequestResult<NoticiaOutput>(HttpStatusCode.NotFound, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
 
                         var output = NoticiaOutput.FromEntity(noticia);
+
+                        // Delay de 5 segundos antes de salvar no cache
+                        await Task.Delay(5000);
                         await _cache.SaveCacheAsync(output, cacheKey, expirationInSeconds: 20);
 
                         return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
@@ -59,6 +61,9 @@ namespace Vertem.News.Application.QueryHandlers
                     {
                         var noticias = _repository.ObterTodos().ToList();
                         var output = noticias.Select(n => NoticiaOutput.FromEntity(n));
+
+                        // Delay de 5 segundos antes de salvar no cache
+                        await Task.Delay(5000);
                         await _cache.SaveCacheAsync(output, cacheKey, expirationInSeconds: 20);
 
                         return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
@@ -68,17 +73,10 @@ namespace Vertem.News.Application.QueryHandlers
                 }
 
             }
-            catch (Exception ex)
+            catch
             {
-                var erros = new List<ErrorModel>();
-                erros.Add(new ErrorModel("Exception", ex.Message));
-
-                return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), erros);
+                return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
             }
-            //catch
-            //{
-            //    return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
-            //}
         }
 
         public async Task<RequestResult<NoticiaOutput>> Handle(GetNoticiaFonteQuery request, CancellationToken cancellationToken)
@@ -152,39 +150,5 @@ namespace Vertem.News.Application.QueryHandlers
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
             }
         }       
-
-        public async Task<RequestResult<NoticiaOutput>> Handle(GetNoticiaSemCacheQuery request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                if (request.SingleData)
-                {
-                    var noticia = await _repository.ObterAsync(request.Id.Value);
-                    if (noticia == null)
-                        return new RequestResult<NoticiaOutput>(HttpStatusCode.NotFound, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
-
-                    var output = NoticiaOutput.FromEntity(noticia);
-
-                    return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
-                }
-                else
-                {
-                    var noticias = _repository.ObterTodos().ToList();
-                    var output = noticias.Select(n => NoticiaOutput.FromEntity(n));
-
-                    return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
-                }
-
-            }
-            catch (Exception ex)
-            {
-                var erros = new List<ErrorModel>();
-                erros.Add(new ErrorModel("Exception", ex.Message));
-
-                return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), erros);
-            }
-        }
-
-
     }
 }
