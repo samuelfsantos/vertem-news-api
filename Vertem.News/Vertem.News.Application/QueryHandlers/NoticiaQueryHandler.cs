@@ -43,8 +43,8 @@ namespace Vertem.News.Application.QueryHandlers
 
                         var output = NoticiaOutput.FromEntity(noticia);
 
-                        // Delay de 5 segundos antes de salvar no cache
-                        await Task.Delay(5000);
+                        // Delay de 2 segundos antes de salvar no cache
+                        await Task.Delay(2000);
                         await _cache.SaveCacheAsync(output, cacheKey, expirationInSeconds: 20);
 
                         return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
@@ -62,8 +62,8 @@ namespace Vertem.News.Application.QueryHandlers
                         var noticias = _repository.ObterTodos().ToList();
                         var output = noticias.Select(n => NoticiaOutput.FromEntity(n));
 
-                        // Delay de 5 segundos antes de salvar no cache
-                        await Task.Delay(5000);
+                        // Delay de 2 segundos antes de salvar no cache
+                        await Task.Delay(2000);
                         await _cache.SaveCacheAsync(output, cacheKey, expirationInSeconds: 20);
 
                         return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
