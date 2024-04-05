@@ -10,7 +10,11 @@ using Vertem.News.Domain.Entities;
 
 namespace Vertem.News.Application.QueryHandlers
 {
-    public class NoticiaQueryHandler : IRequestHandler<GetNoticiaQuery, RequestResult<NoticiaOutput>>, IRequestHandler<GetNoticiaPalavraChaveQuery, RequestResult<NoticiaOutput>>
+    public class NoticiaQueryHandler : IRequestHandler<GetNoticiaQuery, RequestResult<NoticiaOutput>>, 
+        IRequestHandler<GetNoticiaFonteQuery, RequestResult<NoticiaOutput>>,
+        IRequestHandler<GetNoticiaPalavraChaveQuery, RequestResult<NoticiaOutput>>,
+        IRequestHandler<GetNoticiaCategoriaQuery, RequestResult<NoticiaOutput>>,
+        IRequestHandler<GetNoticiaSemCacheQuery, RequestResult<NoticiaOutput>>
     {
         private readonly IDistributedCache _cache;
         private readonly IGenericRepository<Noticia> _repository;
@@ -21,6 +25,60 @@ namespace Vertem.News.Application.QueryHandlers
             _cache = cache;
             _repository = repository;
             _noticiaRepository = noticiaRepository;
+        }
+
+        public async Task<RequestResult<NoticiaOutput>> Handle(GetNoticiaQuery request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (request.SingleData)
+                {
+                    var cacheKey = $"ObterNoticias-{request.Id}";
+
+                    var outputEmCache = await _cache.GetCacheAsync<NoticiaOutput>(cacheKey);
+                    if (outputEmCache is null)
+                    {
+                        var noticia = await _repository.ObterAsync(request.Id.Value);
+                        if (noticia == null)
+                            return new RequestResult<NoticiaOutput>(HttpStatusCode.NotFound, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
+
+                        var output = NoticiaOutput.FromEntity(noticia);
+                        await _cache.SaveCacheAsync(output, cacheKey, expirationInSeconds: 20);
+
+                        return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
+                    }
+                    else
+                        return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, outputEmCache, Enumerable.Empty<ErrorModel>());
+                }
+                else
+                {
+                    const string cacheKey = "ObterTodasNoticias";
+
+                    var outputEmCache = await _cache.GetCacheAsync<IEnumerable<NoticiaOutput>>(cacheKey);
+                    if (outputEmCache is null)
+                    {
+                        var noticias = _repository.ObterTodos().ToList();
+                        var output = noticias.Select(n => NoticiaOutput.FromEntity(n));
+                        await _cache.SaveCacheAsync(output, cacheKey, expirationInSeconds: 20);
+
+                        return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
+                    }
+                    else
+                        return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, outputEmCache, Enumerable.Empty<ErrorModel>());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var erros = new List<ErrorModel>();
+                erros.Add(new ErrorModel("Exception", ex.Message));
+
+                return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), erros);
+            }
+            //catch
+            //{
+            //    return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
+            //}
         }
 
         public async Task<RequestResult<NoticiaOutput>> Handle(GetNoticiaFonteQuery request, CancellationToken cancellationToken)
@@ -93,60 +151,40 @@ namespace Vertem.News.Application.QueryHandlers
             {
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
             }
-        }
+        }       
 
-        public async Task<RequestResult<NoticiaOutput>> Handle(GetNoticiaQuery request, CancellationToken cancellationToken)
+        public async Task<RequestResult<NoticiaOutput>> Handle(GetNoticiaSemCacheQuery request, CancellationToken cancellationToken)
         {
             try
             {
                 if (request.SingleData)
                 {
-                    var cacheKey = $"ObterNoticias-{request.Id}";
+                    var noticia = await _repository.ObterAsync(request.Id.Value);
+                    if (noticia == null)
+                        return new RequestResult<NoticiaOutput>(HttpStatusCode.NotFound, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
 
-                    var outputEmCache = await _cache.GetCacheAsync<NoticiaOutput>(cacheKey);
-                    if (outputEmCache is null)
-                    {
-                        var noticia = await _repository.ObterAsync(request.Id.Value);
-                        if (noticia == null)
-                            return new RequestResult<NoticiaOutput>(HttpStatusCode.NotFound, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
+                    var output = NoticiaOutput.FromEntity(noticia);
 
-                        var output = NoticiaOutput.FromEntity(noticia);
-                        await _cache.SaveCacheAsync(output, cacheKey, expirationInSeconds: 20);
-
-                        return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
-                    }
-                    else
-                        return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, outputEmCache, Enumerable.Empty<ErrorModel>());
+                    return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
                 }
                 else
                 {
-                    const string cacheKey = "ObterTodasNoticias";
+                    var noticias = _repository.ObterTodos().ToList();
+                    var output = noticias.Select(n => NoticiaOutput.FromEntity(n));
 
-                    var outputEmCache = await _cache.GetCacheAsync<IEnumerable<NoticiaOutput>>(cacheKey);
-                    if (outputEmCache is null)
-                    {
-                        var noticias = _repository.ObterTodos().ToList();
-                        var output = noticias.Select(n => NoticiaOutput.FromEntity(n));
-                        await _cache.SaveCacheAsync(output, cacheKey, expirationInSeconds: 20);
-
-                        return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
-                    }
-                    else
-                        return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, outputEmCache, Enumerable.Empty<ErrorModel>());
+                    return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, output, Enumerable.Empty<ErrorModel>());
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 var erros = new List<ErrorModel>();
                 erros.Add(new ErrorModel("Exception", ex.Message));
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), erros);
             }
-            //catch
-            //{
-            //    return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
-            //}
         }
+
+
     }
 }
