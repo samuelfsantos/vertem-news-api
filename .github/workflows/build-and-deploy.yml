@@ -71,6 +71,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install docker-compose
 
+      - name: Exibir diretório do docker-compose.yml
+        run: |
+          echo "Diretório do docker-compose.yml:"
+          dirname docker-compose.yml | xargs ls -al
+
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@master
         with:
