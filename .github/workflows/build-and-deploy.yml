@@ -75,7 +75,9 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           envs:
-            IMAGE_NAME_API, IMAGE_NAME_CACHE, CONTAINER_NAME_CACHE, NETWORK_NAME,
+            IMAGE_NAME_API, IMAGE_NAME_CACHE, CONTAINER_NAME_CACHE,
+            IMAGE_NAME_LOG, IMAGE_NAME_DB, CONTAINER_NAME_LOG, CONTAINER_NAME_DB,
+            NETWORK_NAME, VOLUME_NAME,
             REGISTRY, {{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}, GITHUB_SHA
           script: |
             # Login to registry
