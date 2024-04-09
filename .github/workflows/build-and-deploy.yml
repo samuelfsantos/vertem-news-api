@@ -71,10 +71,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install docker-compose
 
-      - name: Exibir diretório do docker-compose.yml
-        run: |
-          echo "Diretório do docker-compose.yml:"
-          dirname docker-compose.yml | xargs ls -al
+      #- name: Exibir diretório do docker-compose.yml
+      #  run: |
+      #    echo "Diretório do docker-compose.yml:"
+      #    dirname docker-compose.yml | xargs ls -al
 
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@master
@@ -122,11 +122,7 @@ jobs:
             echo "Arquivos e diretórios no servidor remoto:"
             ls -al
 
-            # Exibir o conteúdo do arquivo docker-compose.yml
-            echo "Conteúdo do arquivo docker-compose.yml:"
-            cat > docker-compose.yml << EOF
-            $(cat docker-compose.yml)
-            EOF
+
 
 
 
