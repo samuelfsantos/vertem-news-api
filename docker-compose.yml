@@ -45,7 +45,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2019-latest
     container_name: vertem-news-sql-server
     environment:
-      SA_PASSWORD: "@#$%&*123456"
+      SA_PASSWORD: "##$%&*123456"
       ACCEPT_EULA: "Y"
     ports:
       - "5014:1433"
