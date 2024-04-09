@@ -111,8 +111,8 @@ jobs:
 
 
             # Run docker compose
-            docker-compose -f /path/to/docker-compose.yml pull
-            docker-compose -f /path/to/docker-compose.yml up -d
+            docker-compose -f docker-compose.yml pull
+            docker-compose -f docker-compose.yml up -d
 
 
 
