@@ -115,12 +115,12 @@ jobs:
             #$(echo $IMAGE_NAME_CACHE) --port 5010
 
 
-            # Run docker compose
-            #docker-compose -f docker-compose.yml pull
-            #docker-compose -f docker-compose.yml up -d
-
             echo "Arquivos e diretórios no servidor remoto:"
             ls -al
+
+            #Run docker compose
+            docker-compose -f docker-compose.yml pull
+            docker-compose -f docker-compose.yml up -d
 
 
 
