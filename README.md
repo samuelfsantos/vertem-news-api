@@ -26,10 +26,13 @@ O candidato deve criar uma API RESTful que utiliza uma API pública de notícias
 
 -> DevOps
 * CI/CD com GitHub Actions
-* Imagem docker (Net Core 7.0)
+* Imagem docker (Net Core 8.0)
 * Docker Compose
-* Banco de dados SQLite
 * Hospedagem no Servidor Digital Ocean
+
+-> Banco de dados
+* NoSQL: Redis para cache
+* Relacional: SQLite para persistência
 
 -> Links úteis
 * Pipeline GitHub Actions: https://github.com/samuelfsantos/vertem-news-api/actions
