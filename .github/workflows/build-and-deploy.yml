@@ -63,6 +63,14 @@ jobs:
     
     steps:
 
+      - name: Checkout the repo 
+        uses: actions/checkout@v2
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install docker-compose
+
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@master
         with:
