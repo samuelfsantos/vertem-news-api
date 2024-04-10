@@ -29,7 +29,7 @@ namespace Vertem.News.Api.Configurations
                 .WriteTo.Console()
                 .Enrich.WithExceptionDetails()
                 .Enrich.FromLogContext()
-                .WriteTo.Seq("http://localhost:5012");
+                .WriteTo.Seq("vertem-news-seq:5012");
             });
         }
 
