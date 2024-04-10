@@ -124,7 +124,7 @@ jobs:
             --env ACCEPT_EULA=Y \
             --env SEQ_LICENSE=free \
             --network $(echo $NETWORK_NAME) \
-            $(echo $IMAGE_NAME_LOG) --port 5012
+            $(echo $IMAGE_NAME_LOG)
 
             docker run -dt -p 5014:5432 \
             --name $(echo $CONTAINER_NAME_DB) \
@@ -133,7 +133,7 @@ jobs:
             --env POSTGRES_DB=seqdb \
             --network $(echo $NETWORK_NAME) \
             --volume $(echo $VOLUME_DATA_NAME):/var/lib/postgresql/data \
-            $(echo $IMAGE_NAME_DB) --port 5014
+            $(echo $IMAGE_NAME_DB)
 
 
 
