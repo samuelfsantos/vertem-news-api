@@ -34,25 +34,26 @@ services:
     image: datalust/seq:latest
     container_name: vertem-news-seq
     ports:
-      - "5012:5341"
+      - "5012:80"
     environment:
       - ACCEPT_EULA=Y
-      - SEQ_ADMIN_PASSWORD=admin
+      - SEQ_LICENSE=free
     networks:
       - rede-vertem
       
   db-vertem:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: vertem-news-sql-server
+    image: postgres:latest
+    container_name: vertem-news-postgres
     environment:
-      - SA_PASSWORD=P@ssword_09853200*
-      - ACCEPT_EULA=Y
+      - POSTGRES_USER=sequser
+      - POSTGRES_PASSWORD=seqpassword
+      - POSTGRES_DB=seqdb
     ports:
-      - "5014:1433"
+      - "5014:5432"
     depends_on:
       - log-vertem
     volumes:
-      - vol-data-vertem:/var/opt/mssql
+      - vol-data-vertem:/var/lib/postgresql/data
     networks:
       - rede-vertem
       
