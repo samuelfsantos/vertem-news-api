@@ -135,6 +135,8 @@ namespace Vertem.News.Application.CommandHandlers
             try
             {
                 _logger.LogInformation($"Início do processamento do comando 'InsertNoticiaIntegracaoNewsApiOrgCommand' | Horário: { DateTime.Now }");
+                _logger.LogWarning($"Warning - Início do processamento do comando 'InsertNoticiaIntegracaoNewsApiOrgCommand' | Horário: {DateTime.Now}");
+                _logger.LogError($"Error - Início do processamento do comando 'InsertNoticiaIntegracaoNewsApiOrgCommand' | Horário: {DateTime.Now}");
 
                 var noticias = new List<Noticia>();
 
