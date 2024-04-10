@@ -10,14 +10,14 @@ namespace Vertem.News.Api.Configurations
         {
             builder.Logging.ClearProviders();
             var logger = new LoggerConfiguration()
-                .MinimumLevel.Error()
-                .Enrich.WithProperty("Version", Assembly.GetEntryAssembly()!.GetName().Version)
-                .Enrich.WithEnvironmentName()
-                .Enrich.WithMachineName()
-                .Enrich.WithProcessId()
-                .Enrich.WithThreadId()
-                .Enrich.WithMemoryUsage()
-                .Enrich.FromLogContext()
+                //.MinimumLevel.Error()
+                //.Enrich.WithProperty("Version", Assembly.GetEntryAssembly()!.GetName().Version)
+                //.Enrich.WithEnvironmentName()
+                //.Enrich.WithMachineName()
+                //.Enrich.WithProcessId()
+                //.Enrich.WithThreadId()
+                //.Enrich.WithMemoryUsage()
+                //.Enrich.FromLogContext()
                 .WriteTo.Console()
                 .WriteTo.Seq("vertem-news-seq:5012")
                 .CreateLogger();
