@@ -18,7 +18,7 @@ namespace Vertem.News.Api.Configurations
                 .Enrich.WithMemoryUsage()
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.Seq("http://localhost:5012")
+                .WriteTo.Seq("http://localhost:5012/")
                 .CreateLogger();
             builder.Logging.AddSerilog(logger);
         }
