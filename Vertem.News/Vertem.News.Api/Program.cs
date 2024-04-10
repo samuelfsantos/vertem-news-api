@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Vertem.News.Api.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddLogConfig(builder.Configuration);
 builder.Services.AddDatabaseConfig(builder.Configuration);
 builder.Services.AddCacheConfig(builder.Configuration, builder.Environment);
 builder.Services.AddDependencyInjectionConfig(builder.Configuration);

@@ -7,6 +7,7 @@ using Vertem.News.Infra.Responses;
 using System.Net;
 using Vertem.News.Domain.Enums;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 
 namespace Vertem.News.Application.CommandHandlers
 {
@@ -21,13 +22,15 @@ namespace Vertem.News.Application.CommandHandlers
         private readonly IDistributedCache _cache;
         private readonly IGenericRepository<Noticia> _repository;
         private readonly INoticiaRepository _noticiaRepository;
+        private readonly ILogger<NoticiaCommandHandler> _logger;
 
         public NoticiaCommandHandler(
             IUnitOfWork uow, 
             INewsApiOrgService newsApiOrgService, 
             IDistributedCache cache, 
             IGenericRepository<Noticia> repository,
-            INoticiaRepository noticiaRepository)
+            INoticiaRepository noticiaRepository,
+            ILogger<NoticiaCommandHandler> logger)
         {
             _errors = new List<ErrorModel>();
             _uow = uow;
@@ -35,6 +38,7 @@ namespace Vertem.News.Application.CommandHandlers
             _cache = cache;
             _repository = repository;
             _noticiaRepository = noticiaRepository;
+            _logger = logger;
         }
 
         public async Task<RequestResult<NoticiaOutput>> Handle(InsertNoticiaCommand request, CancellationToken cancellationToken)
@@ -61,8 +65,9 @@ namespace Vertem.News.Application.CommandHandlers
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.Created, NoticiaOutput.FromEntity(noticia), Enumerable.Empty<ErrorModel>());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Erro ao tentar processar o comando 'InsertNoticiaCommand' | Horário: {DateTime.Now}  | Descrição do erro: {ex.Message}");
                 _errors.Add(new ErrorModel("InternalError", $"Ocorreu um erro inesperado durante o cadastro da notícia de título {request.Titulo}"));
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), _errors);
@@ -92,8 +97,9 @@ namespace Vertem.News.Application.CommandHandlers
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, NoticiaOutput.FromEntity(noticia), Enumerable.Empty<ErrorModel>());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Erro ao tentar processar o comando 'UpdateNoticiaCommand' | Horário: {DateTime.Now}  | Descrição do erro: {ex.Message}");
                 _errors.Add(new ErrorModel("InternalError", $"Ocorreu um erro inesperado durante a atualização da notícia de título {request.Titulo}"));
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), _errors);
@@ -115,8 +121,9 @@ namespace Vertem.News.Application.CommandHandlers
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.NoContent, default(NoticiaOutput), _errors);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Erro ao tentar processar o comando 'DeleteNoticiaCommand' | Horário: { DateTime.Now }  | Descrição do erro: { ex.Message }");
                 _errors.Add(new ErrorModel("InternalError", $"Ocorreu um erro inesperado durante a exclusão da notícia de ID:{request.Id}"));
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), _errors);
@@ -127,6 +134,8 @@ namespace Vertem.News.Application.CommandHandlers
         {
             try
             {
+                _logger.LogInformation($"Início do processamento do comando 'InsertNoticiaIntegracaoNewsApiOrgCommand' | Horário: { DateTime.Now }");
+
                 var noticias = new List<Noticia>();
 
                 var noticiasBusiness = await _newsApiOrgService.ObterNoticias(nameof(NoticiaCategoriaEnum.Business));
@@ -167,10 +176,13 @@ namespace Vertem.News.Application.CommandHandlers
                 await _cache.RemoveAsync("ObterNoticiasPorPalavraChave");
                 await _cache.RemoveAsync("ObterNoticiasPorFonte");
 
+                _logger.LogInformation($"Término do processamento do comando 'InsertNoticiaIntegracaoNewsApiOrgCommand' | Horário: { DateTime.Now }");
+
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.OK, default(NoticiaOutput), Enumerable.Empty<ErrorModel>());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Erro ao tentar processar o comando 'InsertNoticiaIntegracaoNewsApiOrgCommand' | Horário: { DateTime.Now } | Descrição do erro: { ex.Message }");
                 _errors.Add(new ErrorModel("InternalError", $"Ocorreu um erro inesperado durante o cadastro das notícias de origem NewsApiOrg"));
 
                 return new RequestResult<NoticiaOutput>(HttpStatusCode.InternalServerError, default(NoticiaOutput), _errors);

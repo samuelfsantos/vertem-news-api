@@ -123,6 +123,7 @@ jobs:
             --name $(echo $CONTAINER_NAME_LOG) \
             --env ACCEPT_EULA=Y \
             --env SEQ_LICENSE=free \
+            --env SEQ_ADMIN_PASSWORD=admin \
             --network $(echo $NETWORK_NAME) \
             $(echo $IMAGE_NAME_LOG)
 
