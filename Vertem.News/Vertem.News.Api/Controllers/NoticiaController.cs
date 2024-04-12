@@ -1,15 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Vertem.News.Application.Commands;
 using Vertem.News.Application.Queries;
 using Vertem.News.Application.ViewModels;
-using Vertem.News.Application.Commands;
-using Vertem.News.Domain.Enums;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.AspNetCore.Authorization;
-using Vertem.News.Domain.Outputs;
-using Vertem.News.Infra.Responses;
-using Vertem.News.Services.NewsApiOrg.Models;
-using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace Vertem.News.Api.Controllers
 {

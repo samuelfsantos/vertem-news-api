@@ -1,6 +1,6 @@
 ﻿using Serilog;
-using System.Reflection;
 using Serilog.Exceptions;
+using System.Reflection;
 
 namespace Vertem.News.Api.Configurations
 {
@@ -11,13 +11,14 @@ namespace Vertem.News.Api.Configurations
             builder.Logging.ClearProviders();
             var logger = new LoggerConfiguration()
                 //.MinimumLevel.Error()
-                //.Enrich.WithProperty("Version", Assembly.GetEntryAssembly()!.GetName().Version)
-                //.Enrich.WithEnvironmentName()
-                //.Enrich.WithMachineName()
-                //.Enrich.WithProcessId()
-                //.Enrich.WithThreadId()
-                //.Enrich.WithMemoryUsage()
-                //.Enrich.FromLogContext()
+                .Enrich.WithProperty("Version", Assembly.GetEntryAssembly()!.GetName().Version)
+                .Enrich.WithEnvironmentName()
+                .Enrich.WithMachineName()
+                .Enrich.WithProcessId()
+                .Enrich.WithThreadId()
+                .Enrich.WithMemoryUsage()
+                .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails()
                 .WriteTo.Console()
                 .WriteTo.Seq("vertem-news-seq:5012")
                 .CreateLogger();
