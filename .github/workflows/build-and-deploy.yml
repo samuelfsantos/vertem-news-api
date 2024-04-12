@@ -113,7 +113,6 @@ jobs:
             docker run -dt -p 5341:5341 -p 5013:80 \
             --name $(echo $CONTAINER_NAME_LOG) \
             --env ACCEPT_EULA=Y \
-            --env SEQ_ADMIN_PASSWORD=admin \
             --network $(echo $NETWORK_NAME) \
             $(echo $IMAGE_NAME_LOG)
 
