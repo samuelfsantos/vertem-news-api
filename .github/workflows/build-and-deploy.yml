@@ -21,12 +21,9 @@ env:
   IMAGE_NAME_API: "vertem-news-api"
   IMAGE_NAME_CACHE: "redis:latest"
   IMAGE_NAME_LOG: "datalust/seq:latest"
-  IMAGE_NAME_DB: "postgres:latest"
   CONTAINER_NAME_CACHE: "vertem-news-redis"
   CONTAINER_NAME_LOG: "vertem-news-seq"
-  CONTAINER_NAME_DB: "vertem-news-postgres"
   NETWORK_NAME: "rede-vertem"
-  VOLUME_DATA_NAME: "vol-data-vertem"
 
 #3
 jobs:
@@ -76,8 +73,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           envs:
             IMAGE_NAME_API, IMAGE_NAME_CACHE, CONTAINER_NAME_CACHE,
-            IMAGE_NAME_LOG, IMAGE_NAME_DB, CONTAINER_NAME_LOG, CONTAINER_NAME_DB,
-            NETWORK_NAME, VOLUME_DATA_NAME,
+            IMAGE_NAME_LOG, CONTAINER_NAME_LOG,
+            NETWORK_NAME,
             REGISTRY, {{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}, GITHUB_SHA
           script: |
             # Login to registry
@@ -90,21 +87,15 @@ jobs:
             docker stop $(echo $IMAGE_NAME_API)
             docker stop $(echo $CONTAINER_NAME_CACHE)
             docker stop $(echo $CONTAINER_NAME_LOG)
-            docker stop $(echo $CONTAINER_NAME_DB)
             
             # Remove old containers
             docker rm $(echo $IMAGE_NAME_API)
             docker rm $(echo $CONTAINER_NAME_CACHE)
             docker rm $(echo $CONTAINER_NAME_LOG)
-            docker rm $(echo $CONTAINER_NAME_DB)
 
             # Network recreation
             docker network rm $(echo $NETWORK_NAME)
             docker network create $(echo $NETWORK_NAME)
-
-            # Volume recreation
-            #docker volume rm $(echo $VOLUME_NAME)
-            docker volume create $(echo $VOLUME_NAME)
             
             # Run new containers
             docker run -dt -p 5008:8080 \
@@ -122,19 +113,7 @@ jobs:
             docker run -dt -p 5012:5341 -p 5013:80 \
             --name $(echo $CONTAINER_NAME_LOG) \
             --env ACCEPT_EULA=Y \
-            #--env SEQ_LICENSE=free \
             --env SEQ_ADMIN_PASSWORD=admin \
             --network $(echo $NETWORK_NAME) \
             $(echo $IMAGE_NAME_LOG)
-
-            #docker run -dt -p 5014:5432 \
-            #--name $(echo $CONTAINER_NAME_DB) \
-            #--env POSTGRES_USER=sequser \
-            #--env POSTGRES_PASSWORD=seqpassword \
-            #--env POSTGRES_DB=seqdb \
-            #--network $(echo $NETWORK_NAME) \
-            #--volume $(echo $VOLUME_DATA_NAME):/var/lib/postgresql/data \
-            #$(echo $IMAGE_NAME_DB)
-
-
 

@@ -38,30 +38,9 @@ services:
       - "5013:80"
     environment:
       - ACCEPT_EULA=Y
-      - SEQ_LICENSE=free
     networks:
       - rede-vertem
-      
-  #db-vertem:
-  #  image: postgres:latest
-  #  container_name: vertem-news-postgres
-  #  environment:
-  #    - POSTGRES_USER=sequser
-  #    - POSTGRES_PASSWORD=seqpassword
-  #    - POSTGRES_DB=seqdb
-  #  ports:
-  #    - "5014:5432"
-  #  depends_on:
-  #    - log-vertem
-  #  volumes:
-  #    - vol-data-vertem:/var/lib/postgresql/data
-  #  networks:
-  #    - rede-vertem
       
 networks:
   rede-vertem:
     driver: bridge
-    
-#volumes:
-#  vol-data-vertem:
-#    driver: local
