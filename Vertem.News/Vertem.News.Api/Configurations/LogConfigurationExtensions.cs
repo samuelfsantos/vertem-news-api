@@ -20,7 +20,7 @@ namespace Vertem.News.Api.Configurations
                 .Enrich.FromLogContext()
                 .Enrich.WithExceptionDetails()
                 .WriteTo.Console()
-                .WriteTo.Seq("http://localhost:5341")
+                .WriteTo.Seq("http://localhost:5012")
                 .CreateLogger();
             builder.Logging.AddSerilog(logger);
 
