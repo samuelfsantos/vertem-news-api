@@ -20,7 +20,7 @@ namespace Vertem.News.Api.Configurations
                 .Enrich.FromLogContext()
                 .Enrich.WithExceptionDetails()
                 .WriteTo.Console()
-                .WriteTo.Seq("vertem-news-seq:5012")
+                .WriteTo.Seq("http://104.248.228.214:5012/")
                 .CreateLogger();
             builder.Logging.AddSerilog(logger);
 
