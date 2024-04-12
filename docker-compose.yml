@@ -34,7 +34,7 @@ services:
     image: datalust/seq:latest
     container_name: vertem-news-seq
     ports:
-      - "5012:5341"
+      - "5341:5341"
       - "5013:80"
     environment:
       - ACCEPT_EULA=Y
